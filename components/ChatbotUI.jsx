@@ -38,6 +38,10 @@ const ChatbotUI = () => {
       const fetchPanels = async () => {
         try {
           const res = await fetch(`/api/conditions?type=panels&ageGroup=${selectedPatient}&bodyArea=${activeBodyArea}`);
+          if (!res.ok) {
+            console.error('API request failed:', res.status, res.statusText);
+            return;
+          }
           const data = await res.json();
           if (data.success) {
             setPanels(data.data);
@@ -61,6 +65,10 @@ const ChatbotUI = () => {
           const apiUrl = `/api/conditions?type=conditions&ageGroup=${selectedPatient}&bodyArea=${activeBodyArea}&panel=${selectedPanel}`;
           console.log('Fetching conditions from:', apiUrl);
           const res = await fetch(apiUrl);
+          if (!res.ok) {
+            console.error('API request failed:', res.status, res.statusText);
+            return;
+          }
           const data = await res.json();
           console.log('API Response:', data);
           if (data.success) {
@@ -120,6 +128,10 @@ const ChatbotUI = () => {
     if (selectedCondition) {
       try {
         const res = await fetch(`/api/conditions?type=scenarios&ageGroup=${selectedPatient}&bodyArea=${activeBodyArea}&panel=${selectedPanel}&condition=${encodeURIComponent(selectedCondition)}`);
+        if (!res.ok) {
+          console.error('API request failed:', res.status, res.statusText);
+          return;
+        }
         const data = await res.json();
         if (data.success) {
           setScenarios(data.data);
@@ -136,6 +148,11 @@ const ChatbotUI = () => {
     setLoadingResults(true);
     try {
       const res = await fetch(`/api/conditions?type=results&ageGroup=${selectedPatient}&bodyArea=${activeBodyArea}&scenarioId=${encodeURIComponent(scenario.scenario_id)}`);
+      if (!res.ok) {
+        console.error('API request failed:', res.status, res.statusText);
+        setLoadingResults(false);
+        return;
+      }
       const data = await res.json();
       if (data.success) {
         const processed = data.data.map(item => {
