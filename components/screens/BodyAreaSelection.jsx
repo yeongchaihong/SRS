@@ -10,7 +10,7 @@ const ASSET_MAP = {
   abdomen: { model: "/3d-model/abdomen_anatomy.glb" },
   pelvis: { model: "/3d-model/VH_F_Pelvis.glb" },
   spine: { model: "/3d-model/the_human_spinal_column.glb" },
-  cardiovascular: { model: "/3d-model/stylizedhumanheart.glb" },
+  cardiac: { model: "/3d-model/stylizedhumanheart.glb" },
   
   // Using the full body model for extremities since separate files aren't shown
   "upper extremity": { model: "/3d-model/arms_hands_head_legs_and_feet_low_poly_female.glb" },
