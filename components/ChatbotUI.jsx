@@ -70,7 +70,6 @@ const ChatbotUI = () => {
     if (!selectedPatient || masterData.length === 0) return [];
     
     return masterData.filter(item => {
-        // MATCH DATA KEY: "Age"
         const ageVal = item["Age"] || item.age; 
         return isAgeApplicable(ageVal, selectedPatient);
     });
@@ -98,11 +97,10 @@ const ChatbotUI = () => {
     fetchMasterData();
   }, []);
 
-  // --- 4. Logic: Filter Panels (Triggered by Body Area Selection) ---
+  // --- 4. Logic: Filter Panels ---
   useEffect(() => {
     if (activeBodyArea && ageFilteredData.length > 0) {
       const relevantRows = ageFilteredData.filter(item => {
-        // MATCH DATA KEY: "Body Area"
         const area = item["Body Area"] || item.body_area;
         return area && area.toLowerCase() === activeBodyArea.toLowerCase();
       });
@@ -110,7 +108,6 @@ const ChatbotUI = () => {
       const uniquePanels = [];
       const seenPanels = new Set();
       relevantRows.forEach(item => {
-        // MATCH DATA KEY: "panel"
         if (item.panel && !seenPanels.has(item.panel)) {
           seenPanels.add(item.panel);
           uniquePanels.push(item);
@@ -123,7 +120,7 @@ const ChatbotUI = () => {
     }
   }, [activeBodyArea, ageFilteredData]);
 
-  // --- 5. Logic: Filter Conditions (Triggered by Panel Selection) ---
+  // --- 5. Logic: Filter Conditions ---
   useEffect(() => {
     if (selectedPanel && ageFilteredData.length > 0) {
       const relevantRows = ageFilteredData.filter(item => {
@@ -134,9 +131,7 @@ const ChatbotUI = () => {
       const uniqueConditions = [];
       const seenConditions = new Set();
       relevantRows.forEach(item => {
-        // MATCH DATA KEY: "condition" (Grouping key)
         const conditionLabel = item.condition; 
-        
         if (conditionLabel && !seenConditions.has(conditionLabel)) {
           seenConditions.add(conditionLabel);
           uniqueConditions.push({ label: conditionLabel, severity: 'normal' });
@@ -212,19 +207,17 @@ const ChatbotUI = () => {
   const handlePanelSelect = (panel) => setSelectedPanel(panel);
   const handleConditionSelect = (condition) => setSelectedCondition(condition);
 
-  // --- 6. Logic: Filter Scenarios (Triggered by Next Button) ---
   const handleNext = () => {
     if (selectedCondition && ageFilteredData.length > 0) {
       const relevantRows = ageFilteredData.filter(item => {
         const area = item["Body Area"] || item.body_area;
         return (area && area.toLowerCase() === activeBodyArea.toLowerCase()) && 
         item.panel === selectedPanel &&
-        item.condition === selectedCondition; // Match the condition group
+        item.condition === selectedCondition;
       });
 
       const uniqueScenarios = relevantRows.map(item => ({
         scenario_id: item.scenario_id, 
-        // MATCH DATA KEY: "scenario_description" as the specific variant text
         scenario: item.scenario_description || "Default Scenario",
         fullObject: item 
       }));
@@ -306,16 +299,16 @@ const ChatbotUI = () => {
   };
 
   return (
-    <div className="min-h-screen w-full relative overflow-hidden font-sans text-black">
+    <div className="min-h-screen w-full relative overflow-hidden font-sans text-black bg-white">
       {!isStarted ? (
         <WelcomeScreen onStart={handleStart} />
       ) : isLoading ? (
-        <div className="bg-white h-screen w-screen flex flex-col items-center justify-center gap-4">
+        <div className="bg-white h-[100dvh] w-full flex flex-col items-center justify-center gap-4">
             <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
             <p className="text-gray-500">Loading data...</p>
         </div>
       ) : (
-        <div className="bg-white h-screen w-screen flex items-center justify-center overflow-hidden relative">
+        <div className="bg-white h-[100dvh] w-full flex items-center justify-center overflow-hidden relative">
           <div className="relative w-full max-w-[1400px] h-full flex flex-col items-center justify-center">
             {showResults ? (
               <ResultsView
@@ -339,7 +332,7 @@ const ChatbotUI = () => {
                 onBack={() => setIsStarted(false)}
               />
             ) : (
-             <div className="fixed inset-0 flex flex-col animate-[fadeIn_0.5s_ease-in-out] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[length:16px_16px]">
+              <div className="absolute inset-0 flex flex-col animate-[fadeIn_0.5s_ease-in-out] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[length:16px_16px]">
                 {!show3D && (
                   <BodyAreaSelection
                     selectedPatient={selectedPatient}
