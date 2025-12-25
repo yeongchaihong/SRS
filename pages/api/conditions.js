@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 
     // Use .lean() for faster execution when you don't need Mongoose document methods
     const data = await Condition.find(query).limit(6000).lean();
-
+    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=59');
     return res.status(200).json({
       success: true,
       data,
