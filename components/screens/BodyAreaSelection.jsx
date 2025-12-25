@@ -3,17 +3,17 @@ import { HandWrittenTitle } from "../ui/hand-writing-text";
 
 // Local mapping for 3D Models only (Icons removed)
 const ASSET_MAP = {
-  head: { model: "/models/head.glb" },
-  neck: { model: "/models/neck.glb" },
-  chest: { model: "/models/chest.glb" },
-  breast: { model: "/models/chest.glb" }, 
-  abdomen: { model: "/models/abdomen.glb" },
-  pelvis: { model: "/models/pelvis.glb" },
-  spine: { model: "/models/spine.glb" },
-  "upper extremity": { model: "/models/arm.glb" },
-  "lower extremity": { model: "/models/leg.glb" },
-  cardiovascular: { model: "/models/chest.glb" },
-  wholebody: { model: "/models/body.glb" }
+  head: { model: "/3d-model/head.glb" },
+  neck: { model: "/3d-model/neck.glb" },
+  chest: { model: "/3d-model/chest.glb" },
+  breast: { model: "/3d-model/chest.glb" }, 
+  abdomen: { model: "/3d-model/abdomen.glb" },
+  pelvis: { model: "/3d-model/pelvis.glb" },
+  spine: { model: "/3d-model/spine.glb" },
+  "upper extremity": { model: "/3d-model/arm.glb" },
+  "lower extremity": { model: "/3d-model/leg.glb" },
+  cardiovascular: { model: "/3d-model/chest.glb" },
+  wholebody: { model: "/3d-model/body.glb" }
 };
 
 export default function BodyAreaSelection({ selectedPatient, masterData, onBack, onBodyAreaSelect }) {
