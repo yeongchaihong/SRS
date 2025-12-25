@@ -339,7 +339,7 @@ const ChatbotUI = () => {
                 onBack={() => setIsStarted(false)}
               />
             ) : (
-              <div className="absolute inset-0 flex flex-col animate-[fadeIn_0.5s_ease-in-out] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+             <div className="fixed inset-0 flex flex-col animate-[fadeIn_0.5s_ease-in-out] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[length:16px_16px]">
                 {!show3D && (
                   <BodyAreaSelection
                     selectedPatient={selectedPatient}
