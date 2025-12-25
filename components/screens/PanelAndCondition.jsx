@@ -81,12 +81,14 @@ export default function Model3DView({
           className="absolute top-1/2 transform -translate-y-1/2 w-96 z-50 flex flex-col gap-4"
           style={{ right: '1rem', boxShadow: 'none' }}
         >
+          {/* Panel Selection */}
           <TypingSelection
-            key={activeBodyArea}
+            key={`panel-${activeBodyArea}`} // Force re-render on body area change
             listMaxHeight="max-h-48"
             className="premium-glass-panel"
             text={"Choose the panel"}
-            options={panels.map(p => ({ label: p }))}
+            // Map the panels object array to simple labels for the dropdown
+            options={panels.map(p => ({ label: p.panel }))} 
             showHeader={true}
             onSelect={(opt) => {
               const val = typeof opt === 'string' ? opt : opt.label;
@@ -94,13 +96,14 @@ export default function Model3DView({
             }}
           />
 
+          {/* Condition Selection */}
           {selectedPanel && (
             <TypingSelection
-              key={selectedPanel}
+              key={`condition-${selectedPanel}`} // Force re-render on panel change
               listMaxHeight="max-h-48"
               className="premium-glass-panel mt-4"
               text={"Choose the condition"}
-              options={conditions}
+              options={conditions} // Already formatted as { label, severity } in ChatbotUI
               showHeader={true}
               onSelect={(opt) => {
                 const val = typeof opt === 'string' ? opt : opt.label;
@@ -109,6 +112,7 @@ export default function Model3DView({
             />
           )}
 
+          {/* Next Button */}
           {selectedCondition && (
             <motion.button
               initial={{ opacity: 0, y: 10 }}

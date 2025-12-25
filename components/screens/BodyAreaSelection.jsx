@@ -1,7 +1,57 @@
+import { useMemo } from "react";
 import { HandWrittenTitle } from "../ui/hand-writing-text";
-import { BODY_AREAS } from "@/constants/bodyAreas";
 
-export default function BodyAreaSelection({ selectedPatient, onBack, onBodyAreaSelect }) {
+// Local mapping for Icons & 3D Models
+// Keys must match the 'body_area' string from your database exactly (case-insensitive)
+const ASSET_MAP = {
+  head: { image: "/icons/head.png", model: "/models/head.glb" },
+  neck: { image: "/icons/neck.png", model: "/models/neck.glb" },
+  chest: { image: "/icons/chest.png", model: "/models/chest.glb" },
+  breast: { image: "/icons/breast.png", model: "/models/chest.glb" }, 
+  abdomen: { image: "/icons/abdomen.png", model: "/models/abdomen.glb" },
+  pelvis: { image: "/icons/pelvis.png", model: "/models/pelvis.glb" },
+  spine: { image: "/icons/spine.png", model: "/models/spine.glb" },
+  "upper extremity": { image: "/icons/arm.png", model: "/models/arm.glb" },
+  "lower extremity": { image: "/icons/leg.png", model: "/models/leg.glb" },
+  cardiovascular: { image: "/icons/heart.png", model: "/models/chest.glb" },
+  wholebody: { image: "/icons/body.png", model: "/models/body.glb" }
+};
+
+export default function BodyAreaSelection({ selectedPatient, masterData, onBack, onBodyAreaSelect }) {
+  
+  // Logic: Extract unique Body Areas from the passed 'masterData'
+  // Note: 'masterData' here is already filtered by Patient Type (Adult/Child) from ChatbotUI
+  const availableAreas = useMemo(() => {
+    if (!masterData || masterData.length === 0) return [];
+
+    const uniqueSet = new Set();
+    const areas = [];
+
+    masterData.forEach(item => {
+      const areaName = item.body_area; 
+      if (!areaName) return;
+      
+      const normalized = areaName.trim();
+      
+      // Only add if not seen before
+      if (!uniqueSet.has(normalized)) {
+        uniqueSet.add(normalized);
+        
+        // Lookup assets (case-insensitive)
+        const assets = ASSET_MAP[normalized.toLowerCase()] || {};
+        
+        areas.push({
+          name: normalized,
+          image: assets.image || null, // Fallback to text if no icon
+          model: assets.model || null  // Fallback to null if no model
+        });
+      }
+    });
+
+    // Sort alphabetically for clean UI
+    return areas.sort((a, b) => a.name.localeCompare(b.name));
+  }, [masterData]);
+
   return (
     <div className="flex flex-col w-full h-full relative">
       <button
@@ -31,34 +81,41 @@ export default function BodyAreaSelection({ selectedPatient, onBack, onBodyAreaS
 
         {/* Right: Grid Selection */}
         <div className="w-[50%] h-full flex items-center justify-center pl-4">
-          <div className="grid grid-cols-6 gap-3 w-full">
-            {BODY_AREAS.map((item, index) => (
-              <div
-                key={index}
-                className={`aspect-square bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center gap-1 transition-all cursor-pointer group hover:shadow-md hover:scale-105 hover:border-blue-400 hover:bg-blue-50/30 p-1 relative overflow-hidden ${item.action ? '' : 'opacity-100'}`}
-                onClick={(e) => {
-                  if (item.action) {
+          <div className="grid grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 w-full max-h-[600px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300">
+            {availableAreas.length > 0 ? (
+              availableAreas.map((item, index) => (
+                <div
+                  key={index}
+                  className="aspect-square bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center gap-1 transition-all cursor-pointer group hover:shadow-md hover:scale-105 hover:border-blue-400 hover:bg-blue-50/30 p-1 relative overflow-hidden"
+                  onClick={(e) => {
                     e.stopPropagation();
-                    onBodyAreaSelect(item.action, item.model || null);
-                  }
-                }}
-              >
-                {/* Clinical Accent - Static for all */}
-                <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-slate-200 group-hover:bg-blue-400 transition-colors" />
+                    // Pass selected area back to Brain (ChatbotUI)
+                    onBodyAreaSelect(item.name, item.model);
+                  }}
+                >
+                  {/* Clinical Accent */}
+                  <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-slate-200 group-hover:bg-blue-400 transition-colors" />
 
-                {item.image ? (
-                  <>
-                    <img src={item.image} alt={item.name} className="w-12 h-12 object-contain group-hover:scale-110 transition-transform mix-blend-multiply" />
-                    <div className="flex flex-col items-center leading-tight z-10">
-                      <span className="font-bold text-sm text-slate-800 uppercase tracking-tight">{item.name}</span>
-                      {item.subtitle && <span className="font-medium text-[10px] text-slate-500">{item.subtitle}</span>}
-                    </div>
-                  </>
-                ) : (
-                  <span className="font-bold text-sm text-slate-700 text-center uppercase break-words px-1 tracking-tight group-hover:text-slate-900">{item.name}</span>
-                )}
+                  {item.image ? (
+                    <>
+                      <img src={item.image} alt={item.name} className="w-12 h-12 object-contain group-hover:scale-110 transition-transform mix-blend-multiply" />
+                      <div className="flex flex-col items-center leading-tight z-10 w-full">
+                        <span className="font-bold text-xs md:text-sm text-slate-800 uppercase tracking-tight text-center truncate w-full px-1">{item.name}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <span className="font-bold text-sm text-slate-700 text-center uppercase break-words px-1 tracking-tight group-hover:text-slate-900">
+                      {item.name}
+                    </span>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full text-center text-gray-500 py-10 font-medium">
+                {/* Fallback if data is loading or no areas match the filter */}
+                No areas found for this patient type.
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

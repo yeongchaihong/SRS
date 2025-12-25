@@ -15,38 +15,50 @@ export default function ScenarioSelection({ scenarios, selectedModelSrc, onBack,
         <h2 className="text-4xl font-bold text-black mb-8">Choose your scenario</h2>
 
         <div className="flex w-full gap-8 h-full">
+          {/* Left Side: 3D Model Preview */}
           <div className="w-1/3 flex items-center justify-center">
-            <div className="w-64 h-64 rounded-full bg-gray-200/50 border-2 border-white/50 flex items-center justify-center overflow-hidden relative">
+            <div className="w-64 h-64 rounded-full bg-gray-200/50 border-2 border-white/50 flex items-center justify-center overflow-hidden relative shadow-inner">
               <ModelViewer
                 src={selectedModelSrc}
-                alt="3D Cardiac Model"
+                alt="3D Model"
                 cameraControls={true}
                 disableZoom={true}
               />
             </div>
           </div>
 
+          {/* Right Side: Scenario List */}
           <div className="w-2/3 overflow-y-auto pr-4 custom-scrollbar">
             <table className="w-full border-collapse">
-              <thead>
+              <thead className="sticky top-0 bg-white/95 backdrop-blur-sm z-10">
                 <tr className="border-b-2 border-black/10">
-                  <th className="text-left p-4 text-xl font-semibold text-black/70 w-24">no.</th>
-                  <th className="text-left p-4 text-xl font-semibold text-black/70">scenario</th>
+                  <th className="text-left p-4 text-xl font-semibold text-black/70 w-32">Variant ID</th>
+                  <th className="text-left p-4 text-xl font-semibold text-black/70">Scenario Description</th>
                 </tr>
               </thead>
               <tbody>
-                {scenarios.map((scenario, index) => (
+                {scenarios.map((item, index) => (
                   <tr
-                    key={scenario._id || index}
-                    className="border-b border-black/5 hover:bg-white/40 transition-colors cursor-pointer"
-                    onClick={() => onScenarioSelect(scenario)}
+                    key={item.scenario_id || index}
+                    className="border-b border-black/5 hover:bg-blue-50/50 transition-colors cursor-pointer group"
+                    onClick={() => onScenarioSelect(item)}
                   >
-                    <td className="p-4 text-lg font-medium text-black/80">{scenario.scenario_id}</td>
-                    <td className="p-4 text-lg text-black/80">{scenario.scenario_description}</td>
+                    <td className="p-4 text-lg font-medium text-slate-500 group-hover:text-blue-600">
+                      {item.scenario_id}
+                    </td>
+                    <td className="p-4 text-lg text-black/80 group-hover:text-black">
+                      {item.scenario}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            
+            {scenarios.length === 0 && (
+              <div className="w-full py-10 text-center text-gray-400 italic">
+                No scenarios found for the selected condition.
+              </div>
+            )}
           </div>
         </div>
       </div>
