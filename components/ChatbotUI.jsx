@@ -81,7 +81,7 @@ const ChatbotUI = () => {
     const fetchMasterData = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch('/api/conditions?type=master');
+        const res = await fetch('/api/conditions');
         if (!res.ok) throw new Error("API Failed");
         const data = await res.json();
         if (data.success) {
