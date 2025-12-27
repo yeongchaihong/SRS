@@ -1,9 +1,24 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { GooeyText } from "../ui/gooey-text-morphing";
 import { StartChatButton } from "../ui/startchat-button";
 
 export default function WelcomeScreen({ onStart }) {
-  return (
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect screen size
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); // mobile breakpoint
+    };
+
+    handleResize(); // initial check
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Desktop view
+  const renderDesktop = () => (
     <div className="bg-[#fafafa] h-screen w-full flex items-center justify-between px-20">
       <div className="flex flex-col items-start gap-6 z-10 max-w-4xl">
         <div className="flex flex-col items-start w-full -space-y-6 mb-2">
@@ -71,4 +86,55 @@ export default function WelcomeScreen({ onStart }) {
       </div>
     </div>
   );
+
+  // Mobile view
+  const renderMobile = () => (
+    <div className="bg-white h-screen w-full flex flex-col items-center">
+      {/* Text on top */}
+      <div className="flex flex-col items-center w-full gap-0 mt-15">
+        <motion.div animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }} transition={{ duration: 9, repeat: Infinity }}>
+          <GooeyText
+            texts={["WELCOME"]}
+            morphTime={3}
+            cooldownTime={1}
+            blurAmount={10}
+            alignment="center"
+            className="font-bold h-24 w-full"
+            textClassName="text-5xl text-black tracking-tighter text-center"
+          />
+        </motion.div>
+        <motion.div animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }} transition={{ duration: 9, repeat: Infinity }}>
+          <GooeyText
+            texts={["CLINICIAN"]}
+            morphTime={3}
+            cooldownTime={1}
+            blurAmount={10}
+            alignment="center"
+            className="font-bold h-24 w-full"
+            textClassName="text-5xl text-black tracking-tighter text-center"
+          />
+        </motion.div>
+      </div>
+
+      {/* Image in middle */}
+      <div className="flex justify-center w-150">
+        <img
+          src="/photo/transparenbody.png"
+          alt="Medical Illustration"
+          className="object-contain max-h-[40vh] w-auto"
+        />
+      </div>
+
+      {/* Paragraph + button at bottom */}
+      <div className="flex flex-col items-center gap-4 w-full pt-10">
+        <p className="font-semibold text-2xl text-black text-center leading-tight">
+          How's your <br></br> patient today?
+        </p>
+        <StartChatButton onClick={onStart} />
+      </div>
+    </div>
+  );
+
+  // Conditional rendering
+  return isMobile ? renderMobile() : renderDesktop();
 }

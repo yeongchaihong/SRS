@@ -10,20 +10,20 @@ import ScenarioSelection from "./screens/ScenarioSelection";
 import ResultsView from "./screens/ResultsView";
 
 const ChatbotUI = () => {
-  // UI State
+  // --- UI State ---
   const [isStarted, setIsStarted] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showBodyArea, setShowBodyArea] = useState(false);
-  const [show3D, setShow3D] = useState(false);
+  const [showPanelAndCondition, setShowPanelAndCondition] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   
-  // 3D Model State
+  // --- 3D Model State ---
   const [selectedModelSrc, setSelectedModelSrc] = useState(null);
   const [modelCentered, setModelCentered] = useState(true);
   const [hasMoved, setHasMoved] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
   
-  // Selection State
+  // --- Selection State ---
   const [activeBodyArea, setActiveBodyArea] = useState(null);
   const [panels, setPanels] = useState([]);
   const [selectedPanel, setSelectedPanel] = useState(null);
@@ -33,50 +33,31 @@ const ChatbotUI = () => {
   const [showScenarioSelection, setShowScenarioSelection] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState(null);
   
-  // Data State
+  // --- Data & Results State ---
   const [masterData, setMasterData] = useState([]); 
-  
-  // Results State
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState([]);
   const [allFetchedResults, setAllFetchedResults] = useState({ usually: [], maybe: [], rarely: [] });
   const [showNotAppropriate, setShowNotAppropriate] = useState(false);
 
-  // --- 1. Helper Function: Age Boundary Logic ---
+  // --- Helpers & Effects (Unchanged) ---
   const isAgeApplicable = (dbAgeString, patientType) => {
     if (!dbAgeString) return true;
     if (!patientType) return true;
-
     try {
       const cleanStr = String(dbAgeString).trim();
       const parts = cleanStr.split('-').map(s => parseInt(s.trim()));
-      
       if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) return true; 
-      
       const [min, max] = parts;
-      
-      if (patientType === 'adult') {
-        return max >= 18;
-      } else {
-        return min < 18;
-      }
-    } catch (e) {
-      return true;
-    }
+      return patientType === 'adult' ? max >= 18 : min < 18;
+    } catch (e) { return true; }
   };
 
-  // --- 2. Computed Data: Age Filtered Master Data ---
   const ageFilteredData = useMemo(() => {
     if (!selectedPatient || masterData.length === 0) return [];
-    
-    return masterData.filter(item => {
-        const ageVal = item["Age"] || item.age; 
-        return isAgeApplicable(ageVal, selectedPatient);
-    });
+    return masterData.filter(item => isAgeApplicable(item["Age"] || item.age, selectedPatient));
   }, [selectedPatient, masterData]);
 
-
-  // --- 3. Fetch Master Data ONCE on Mount ---
   useEffect(() => {
     const fetchMasterData = async () => {
       setIsLoading(true);
@@ -97,14 +78,12 @@ const ChatbotUI = () => {
     fetchMasterData();
   }, []);
 
-  // --- 4. Logic: Filter Panels ---
   useEffect(() => {
     if (activeBodyArea && ageFilteredData.length > 0) {
       const relevantRows = ageFilteredData.filter(item => {
         const area = item["Body Area"] || item.body_area;
         return area && area.toLowerCase() === activeBodyArea.toLowerCase();
       });
-
       const uniquePanels = [];
       const seenPanels = new Set();
       relevantRows.forEach(item => {
@@ -120,14 +99,12 @@ const ChatbotUI = () => {
     }
   }, [activeBodyArea, ageFilteredData]);
 
-  // --- 5. Logic: Filter Conditions ---
   useEffect(() => {
     if (selectedPanel && ageFilteredData.length > 0) {
       const relevantRows = ageFilteredData.filter(item => {
         const area = item["Body Area"] || item.body_area;
         return (area && area.toLowerCase() === activeBodyArea.toLowerCase()) && item.panel === selectedPanel;
       });
-
       const uniqueConditions = [];
       const seenConditions = new Set();
       relevantRows.forEach(item => {
@@ -142,9 +119,8 @@ const ChatbotUI = () => {
     }
   }, [selectedPanel, activeBodyArea, ageFilteredData]);
 
-  // --- 3D Model Animation ---
   useEffect(() => {
-    if (!show3D) {
+    if (!showPanelAndCondition) {
       setModelCentered(true);
       setHasMoved(false);
       setSelectedPanel(null);
@@ -156,9 +132,9 @@ const ChatbotUI = () => {
       }, 800);
       return () => clearTimeout(timer);
     }
-  }, [show3D]);
+  }, [showPanelAndCondition]);
 
-  // --- Handlers ---
+  // --- Handlers (Unchanged) ---
   const handleStart = () => setIsStarted(true);
   
   const handlePatientSelect = (type) => {
@@ -169,7 +145,7 @@ const ChatbotUI = () => {
   const handleBack = () => {
     setSelectedPatient(null);
     setShowBodyArea(false);
-    setShow3D(false);
+    setShowPanelAndCondition(false);
     setSelectedPanel(null);
     setSelectedCondition(null);
   };
@@ -177,12 +153,12 @@ const ChatbotUI = () => {
   const handleBodyAreaSelect = (bodyArea, modelSrc) => {
     setSelectedModelSrc(modelSrc);
     setActiveBodyArea(bodyArea);
-    setShow3D(true);
+    setShowPanelAndCondition(true);
   };
 
   const handleBack3D = (e) => {
     e.stopPropagation();
-    setShow3D(false);
+    setShowPanelAndCondition(false);
     setActiveBodyArea(null);
     setSelectedPanel(null);
     setSelectedCondition(null);
@@ -192,7 +168,7 @@ const ChatbotUI = () => {
 
   const handleClose3D = (e) => {
     e.stopPropagation();
-    setShow3D(false);
+    setShowPanelAndCondition(false);
   };
 
   const handleUserInteract = (info) => {
@@ -286,7 +262,7 @@ const ChatbotUI = () => {
     setIsStarted(false);
     setSelectedPatient(null);
     setShowBodyArea(false);
-    setShow3D(false);
+    setShowPanelAndCondition(false);
     setActiveBodyArea(null);
     setPanels([]);
     setSelectedPanel(null);
@@ -298,72 +274,93 @@ const ChatbotUI = () => {
     setSelectedScenario(null);
   };
 
+  // --- VIEW LOGIC: The Switch Statement ---
+  const renderActiveView = () => {
+    // We use "switch (true)" to evaluate boolean conditions in priority order.
+    // This replaces the nested ternaries.
+    switch (true) {
+      case showResults:
+        return (
+          <ResultsView
+            results={results}
+            showNotAppropriate={showNotAppropriate}
+            onBack={handleBackFromResults}
+            onToggleNotAppropriate={handleToggleNotAppropriate}
+            onStartAgain={handleStartAgain}
+          />
+        );
+
+      case showScenarioSelection:
+        return (
+          <ScenarioSelection
+            scenarios={scenarios}
+            selectedModelSrc={selectedModelSrc}
+            onBack={handleBackFromScenario}
+            onScenarioSelect={handleScenarioSelect}
+          />
+        );
+
+      case !showBodyArea:
+        return (
+          <PatientSelection
+            selectedPatient={selectedPatient}
+            onPatientSelect={handlePatientSelect}
+            onBack={() => setIsStarted(false)}
+          />
+        );
+
+      // Default Case: Show Body Area + 3D Panels (The complex view)
+      default:
+        return (
+          <div className="absolute inset-0 flex flex-col animate-[fadeIn_0.5s_ease-in-out] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[length:16px_16px]">
+            {!showPanelAndCondition && (
+              <BodyAreaSelection
+                selectedPatient={selectedPatient}
+                masterData={ageFilteredData}
+                onBack={handleBack}
+                onBodyAreaSelect={handleBodyAreaSelect}
+              />
+            )}
+
+            <AnimatePresence>
+              {showPanelAndCondition && (
+                <PanelAndCondition
+                  selectedModelSrc={selectedModelSrc}
+                  modelCentered={modelCentered}
+                  hasMoved={hasMoved}
+                  panels={panels}
+                  conditions={conditions}
+                  activeBodyArea={activeBodyArea}
+                  selectedPanel={selectedPanel}
+                  selectedCondition={selectedCondition}
+                  onBack={handleBack3D}
+                  onClose={handleClose3D}
+                  onUserInteract={handleUserInteract}
+                  onPanelSelect={handlePanelSelect}
+                  onConditionSelect={handleConditionSelect}
+                  onNext={handleNext}
+                />
+              )}
+            </AnimatePresence>
+          </div>
+        );
+    }
+  };
+
+  // --- Main Render ---
   return (
     <div className="min-h-screen w-full relative overflow-hidden font-sans text-black bg-white">
       {!isStarted ? (
         <WelcomeScreen onStart={handleStart} />
       ) : isLoading ? (
         <div className="bg-white h-[100dvh] w-full flex flex-col items-center justify-center gap-4">
-            <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
-            <p className="text-gray-500">Loading data...</p>
+          <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
+          <p className="text-gray-500">Loading data...</p>
         </div>
       ) : (
         <div className="bg-white h-[100dvh] w-full flex items-center justify-center overflow-hidden relative">
-          <div className="relative w-full max-w-[1400px] h-full flex flex-col items-center justify-center">
-            {showResults ? (
-              <ResultsView
-                results={results}
-                showNotAppropriate={showNotAppropriate}
-                onBack={handleBackFromResults}
-                onToggleNotAppropriate={handleToggleNotAppropriate}
-                onStartAgain={handleStartAgain}
-              />
-            ) : showScenarioSelection ? (
-              <ScenarioSelection
-                scenarios={scenarios}
-                selectedModelSrc={selectedModelSrc}
-                onBack={handleBackFromScenario}
-                onScenarioSelect={handleScenarioSelect}
-              />
-            ) : !showBodyArea ? (
-              <PatientSelection
-                selectedPatient={selectedPatient}
-                onPatientSelect={handlePatientSelect}
-                onBack={() => setIsStarted(false)}
-              />
-            ) : (
-              <div className="absolute inset-0 flex flex-col animate-[fadeIn_0.5s_ease-in-out] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[length:16px_16px]">
-                {!show3D && (
-                  <BodyAreaSelection
-                    selectedPatient={selectedPatient}
-                    masterData={ageFilteredData}
-                    onBack={handleBack}
-                    onBodyAreaSelect={handleBodyAreaSelect}
-                  />
-                )}
-
-                <AnimatePresence>
-                  {show3D && (
-                    <PanelAndCondition
-                      selectedModelSrc={selectedModelSrc}
-                      modelCentered={modelCentered}
-                      hasMoved={hasMoved}
-                      panels={panels}
-                      conditions={conditions}
-                      activeBodyArea={activeBodyArea}
-                      selectedPanel={selectedPanel}
-                      selectedCondition={selectedCondition}
-                      onBack={handleBack3D}
-                      onClose={handleClose3D}
-                      onUserInteract={handleUserInteract}
-                      onPanelSelect={handlePanelSelect}
-                      onConditionSelect={handleConditionSelect}
-                      onNext={handleNext}
-                    />
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
+          <div className="relative w-full max-w-[1920px] h-full flex flex-col items-center justify-center">
+            {renderActiveView()}
           </div>
         </div>
       )}
