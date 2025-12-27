@@ -56,37 +56,48 @@ export default function BodyAreaSelection({ selectedPatient, masterData, onBack,
 
   return (
     <div className="flex flex-col w-full h-full relative overflow-hidden">
+      {/* Back Button */}
       <button
         onClick={onBack}
         aria-label="Back"
-        className="absolute left-8 top-8 text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-20"
+        className="absolute left-4 top-4 md:left-8 md:top-8 text-black text-lg md:text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-30"
       >
         &lt; Back
       </button>
 
       {/* Header */}
-      <div className="w-full flex justify-center mt-4 mb-4 h-40 shrink-0 z-10">
-        <HandWrittenTitle title="CHOOSE BODY AREA" subtitle="" className="py-12" />
+      <div className="w-full flex justify-center mt-2 md:mt-4 mb-2 md:mb-4 shrink-0 z-20">
+        <HandWrittenTitle 
+          title="CHOOSE BODY AREA" 
+          subtitle="" 
+          className="py-6 md:py-12" // Reduced padding on mobile
+        />
       </div>
 
-      {/* Main Content */}
-      <div className="flex flex-1 w-full max-w-[1400px] mx-auto px-12 gap-16 items-start justify-center h-full pb-8 z-10 overflow-hidden">
+      {/* Main Content Wrapper */}
+      {/* Mobile: Stacked (Col), Desktop: Side-by-Side (Row) */}
+      <div className="flex flex-col lg:flex-row flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-12 gap-4 lg:gap-16 items-center lg:items-start justify-center h-full pb-4 md:pb-8 z-10 overflow-hidden">
 
-        {/* Left: Body Image Card (Original 50% width) */}
-        <div className="w-[50%] h-full flex items-center justify-center relative -mt-10 overflow-hidden">
+        {/* Left: Body Image Card */}
+        {/* Mobile: 25% height, Desktop: 50% width + full height */}
+        <div className="w-full h-[25vh] lg:w-[50%] lg:h-full flex items-center justify-center relative lg:-mt-10 overflow-hidden shrink-0">
           <img
             src={selectedPatient === 'adult' ? "/photo/humanbody.png" : "/photo/humanbodychild.png"}
             alt="Body Reference"
-            className="h-[120%] w-full object-contain scale-[1.35] relative z-0"
+            // Adjusted scale for mobile to fit better
+            className="h-[90%] lg:h-[120%] w-auto object-contain scale-100 lg:scale-[1.35] relative z-0"
           />
         </div>
 
-        {/* Right: Grid Selection (Original 50% width) */}
-        <div className="w-[50%] h-full flex flex-col justify-center pl-4 overflow-hidden">
-            {/* Scrollable Container with padding fix */}
-            <div className="w-full max-h-full overflow-y-auto p-4 custom-scrollbar">
-                {/* Original Responsive Grid Columns */}
-                <div className="grid grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 w-full">
+        {/* Right: Grid Selection */}
+        {/* Mobile: Takes remaining height, Desktop: 50% width */}
+        <div className="w-full lg:w-[50%] h-full flex flex-col justify-start lg:justify-center pl-0 lg:pl-4 overflow-hidden">
+            
+            {/* Scrollable Container */}
+            <div className="w-full max-h-full overflow-y-auto p-2 md:p-4 custom-scrollbar">
+                
+                {/* Grid: 2 cols on mobile, 5-6 on desktop */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3 w-full pb-20 lg:pb-0">
                     {availableAreas.length > 0 ? (
                     availableAreas.map((item, index) => (
                         <div
@@ -99,8 +110,7 @@ export default function BodyAreaSelection({ selectedPatient, masterData, onBack,
                         >
                         <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-slate-200 group-hover:bg-blue-400 transition-colors" />
 
-                        {/* Text Only Display */}
-                        <span className="font-bold text-sm text-slate-700 text-center uppercase break-words px-1 tracking-tight group-hover:text-slate-900">
+                        <span className="font-bold text-xs md:text-sm text-slate-700 text-center uppercase break-words px-1 tracking-tight group-hover:text-slate-900 leading-tight">
                             {item.name}
                         </span>
                         </div>
