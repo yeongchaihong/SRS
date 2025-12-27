@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import ModelViewer from "../ui/model-viewer";
 import TypingSelection from "../ui/typing-selection";
 
-export default function Model3DView({
+export default function PanelAndCondition({
   selectedModelSrc,
   modelCentered,
   hasMoved,

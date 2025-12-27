@@ -5,7 +5,7 @@ import { AnimatePresence } from "framer-motion";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import PatientSelection from "./screens/PatientSelection";
 import BodyAreaSelection from "./screens/BodyAreaSelection";
-import Model3DView from "./screens/PanelAndCondition"; 
+import PanelAndCondition from "./screens/PanelAndCondition"; 
 import ScenarioSelection from "./screens/ScenarioSelection";
 import ResultsView from "./screens/ResultsView";
 
@@ -344,7 +344,7 @@ const ChatbotUI = () => {
 
                 <AnimatePresence>
                   {show3D && (
-                    <Model3DView
+                    <PanelAndCondition
                       selectedModelSrc={selectedModelSrc}
                       modelCentered={modelCentered}
                       hasMoved={hasMoved}
