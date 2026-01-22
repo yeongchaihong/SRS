@@ -1,10 +1,9 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
 import ModelViewer from "../ui/model-viewer";
 import TypingSelection from "../ui/typing-selection";
 
 export default function PanelAndCondition({
   selectedModelSrc,
-  modelCentered,
   hasMoved,
   panels,
   conditions,
@@ -12,119 +11,149 @@ export default function PanelAndCondition({
   selectedPanel,
   selectedCondition,
   onBack,
-  onClose,
   onUserInteract,
   onPanelSelect,
   onConditionSelect,
-  onNext
+  onNext,
 }) {
+  // STATE LOCK: Tracks if mouse is over the UI
+  // When true, we disable pointer events on the 3D model so it can't steal the scroll
+  const [isHoveringUI, setIsHoveringUI] = useState(false);
+
   return (
-    <motion.div
-      key="cardiac-3d"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.28 }}
-      className="absolute inset-0 z-40 flex items-center justify-center bg-transparent"
-    >
-      <button
-        onClick={onBack}
-        aria-label="Back"
-        className="absolute left-8 top-8 text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-50"
+    <div className="flex flex-col lg:flex-row w-full h-screen relative overflow-hidden bg-slate-50">
+      
+      {/* --- LEFT COLUMN: 3D MODEL --- */}
+      {/* Dynamic Class: if isHoveringUI is true, pointer-events-none disables the 3D interaction */}
+      <div 
+        className={`flex-1 h-full relative bg-slate-100/50 flex items-center justify-center overflow-hidden z-0 transition-opacity duration-200 
+        ${isHoveringUI ? "pointer-events-none opacity-90" : "pointer-events-auto"}`}
       >
-        &lt; Back
-      </button>
+        
+        {/* Back Button (Must be pointer-events-auto to work even if model is disabled) */}
+        <div className="absolute top-0 -left-2 w-full pt-6 px-6 md:px-12 z-50 pointer-events-auto">
+          <button
+            onClick={onBack}
+            className="text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 bg-slate-50/50 backdrop-blur-sm px-2 rounded-lg"
+          >
+            &lt; Back
+          </button>
+        </div>
 
-      <motion.div
-        className="relative w-3/5 h-4/5 bg-transparent flex items-center justify-center rounded-lg shadow-none"
-        style={{ overflow: 'visible', transform: 'translateX(-6%)' }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.32 }}
-      >
-        <button
-          onClick={onClose}
-          aria-label="Close 3D"
-          className="absolute top-4 right-4 z-50 bg-white/90 rounded-full px-3 py-1 shadow-md hover:scale-105 transition-transform"
-        >
-          ✕
-        </button>
-
-        <motion.div
-          className="w-full h-full flex items-center justify-center p-4"
-          initial={{ x: 0, scale: 1.35 }}
-          animate={modelCentered ? { x: 0, scale: 1.35 } : { x: '-30%', scale: 0.95 }}
-          transition={{ duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }}
-        >
-          <div className="heart-wrapper" style={{ width: '86%', height: '86%' }}>
-            {selectedModelSrc ? (
-              <ModelViewer
-                src={selectedModelSrc}
-                alt="3D Model"
-                cameraControls={true}
-                onUserInteract={onUserInteract}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="text-gray-400 font-medium text-lg bg-white/50 px-6 py-4 rounded-xl backdrop-blur-sm border border-white/60 shadow-sm">
-                  Select options from the panel
-                </div>
-              </div>
-            )}
-          </div>
-        </motion.div>
-      </motion.div>
-
-      {hasMoved && (
-        <div
-          className="absolute top-1/2 transform -translate-y-1/2 w-96 z-50 flex flex-col gap-4"
-          style={{ right: '1rem', boxShadow: 'none' }}
-        >
-          {/* Panel Selection */}
-          <TypingSelection
-            key={`panel-${activeBodyArea}`} // Force re-render on body area change
-            listMaxHeight="max-h-48"
-            className="premium-glass-panel"
-            text={"Choose the panel"}
-            // Map the panels object array to simple labels for the dropdown
-            options={panels.map(p => ({ label: p.panel }))} 
-            showHeader={true}
-            onSelect={(opt) => {
-              const val = typeof opt === 'string' ? opt : opt.label;
-              onPanelSelect(val);
-            }}
-          />
-
-          {/* Condition Selection */}
-          {selectedPanel && (
-            <TypingSelection
-              key={`condition-${selectedPanel}`} // Force re-render on panel change
-              listMaxHeight="max-h-48"
-              className="premium-glass-panel mt-4"
-              text={"Choose the condition"}
-              options={conditions} // Already formatted as { label, severity } in ChatbotUI
-              showHeader={true}
-              onSelect={(opt) => {
-                const val = typeof opt === 'string' ? opt : opt.label;
-                onConditionSelect(val);
-              }}
+        <div className="h-[65%] w-[65%] relative flex items-center justify-center">
+          {selectedModelSrc ? (
+            <ModelViewer
+              src={selectedModelSrc}
+              alt="3D Model"
+              cameraControls={true}
+              onUserInteract={onUserInteract}
+              className="w-full h-full cursor-move"
             />
-          )}
-
-          {/* Next Button */}
-          {selectedCondition && (
-            <motion.button
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-4 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
-              onClick={onNext}
-            >
-              Next
-            </motion.button>
+          ) : (
+            <div className="text-slate-400 font-medium animate-pulse">
+              Loading Model...
+            </div>
           )}
         </div>
-      )}
-    </motion.div>
+        
+        {!hasMoved && (
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-none text-sm text-slate-400 font-medium">
+            (Rotate model to inspect)
+          </div>
+        )}
+      </div>
+
+      {/* --- RIGHT COLUMN: INTERACTION PANEL --- */}
+      <div 
+        className="w-full lg:w-[450px] shrink-0 h-full bg-white border-l border-slate-200 shadow-sm z-50 flex flex-col"
+        // LOCK ACTIVATION: Mouse enter/leave toggles the 3D model's interactivity
+        onMouseEnter={() => setIsHoveringUI(true)}
+        onMouseLeave={() => setIsHoveringUI(false)}
+      >
+        
+        {/* HEADER */}
+        <div className="p-6 md:p-8 shrink-0 bg-white z-10 border-b border-slate-100">
+          <h2 className="font-extrabold text-3xl mb-1 uppercase text-slate-900 leading-tight">
+            {activeBodyArea}
+          </h2>
+          <p className="text-slate-500 text-sm">
+            Select the specific panel and condition observed.
+          </p>
+        </div>
+
+        {/* SPLIT SCROLL AREA */}
+        <div className="flex-1 min-h-0 flex flex-col">
+
+          {/* TOP HALF: PANEL LIST */}
+          <div className="flex-1 min-h-0 flex flex-col p-6 md:px-8 md:pt-6 md:pb-2">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2 pl-1">
+              Panel
+            </label>
+            {/* Panel List Container */}
+            <div className="flex-1 border border-slate-200 rounded-xl overflow-hidden shadow-sm relative flex flex-col">
+              <div className="flex-1 overflow-y-auto custom-scrollbar">
+                <TypingSelection
+                  key={`panel-${activeBodyArea}`}
+                  listMaxHeight="h-auto" 
+                  className="w-full border-none shadow-none"
+                  text="Select Panel..."
+                  options={panels.map((p) => ({ label: p.panel }))}
+                  showHeader={false}
+                  onSelect={(opt) => {
+                    const val = typeof opt === "string" ? opt : opt.label;
+                    onPanelSelect(val);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* BOTTOM HALF: CONDITION LIST */}
+          {selectedPanel && (
+            <div className="flex-1 min-h-0 flex flex-col p-6 md:px-8 md:pt-2 md:pb-6 border-t border-slate-50 bg-slate-50/30">
+              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2 pl-1">
+                Condition
+              </label>
+              {/* Condition List Container */}
+              <div className="flex-1 border border-slate-200 rounded-xl overflow-hidden shadow-sm relative flex flex-col bg-white">
+                <div className="flex-1 overflow-y-auto custom-scrollbar">
+                  <TypingSelection
+                    key={`condition-${selectedPanel}`}
+                    listMaxHeight="h-auto"
+                    className="w-full border-none shadow-none"
+                    text="Select Condition..."
+                    options={conditions}
+                    showHeader={false}
+                    onSelect={(opt) => {
+                      const val = typeof opt === "string" ? opt : opt.label;
+                      onConditionSelect(val);
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* FOOTER */}
+        <div className="p-6 md:p-8 pt-4 border-t border-slate-100 bg-white shrink-0 z-20">
+          <button
+            onClick={onNext}
+            disabled={!selectedCondition}
+            className={`
+              w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2
+              ${
+                selectedCondition
+                  ? "bg-slate-900 text-white hover:bg-black active:scale-[0.99] shadow-lg shadow-slate-200"
+                  : "bg-slate-100 text-slate-300 cursor-not-allowed"
+              }
+            `}
+          >
+            Next Step
+          </button>
+        </div>
+
+      </div>
+    </div>
   );
 }
