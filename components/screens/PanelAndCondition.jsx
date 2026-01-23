@@ -17,29 +17,27 @@ export default function PanelAndCondition({
   onNext,
 }) {
   // STATE LOCK: Tracks if mouse is over the UI
-  // When true, we disable pointer events on the 3D model so it can't steal the scroll
   const [isHoveringUI, setIsHoveringUI] = useState(false);
 
   return (
     <div className="flex flex-col lg:flex-row w-full h-screen relative overflow-hidden bg-slate-50">
       
+      {/* --- 1. BACK BUTTON (Moved to Root) --- */}
+      {/* Placed here so it sits at the top-left on BOTH Mobile and Desktop, independent of columns */}
+      <div className="absolute top-0 -left-2 w-full pt-6 px-6 md:px-12 z-60 pointer-events-none">
+        <button
+          onClick={onBack}
+          className="pointer-events-auto text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 bg-slate-50/50 backdrop-blur-sm px-2 rounded-lg"
+        >
+          &lt; Back
+        </button>
+      </div>
+
       {/* --- LEFT COLUMN: 3D MODEL --- */}
-      {/* Dynamic Class: if isHoveringUI is true, pointer-events-none disables the 3D interaction */}
       <div 
         className={`flex-1 h-full relative bg-slate-100/50 flex items-center justify-center overflow-hidden z-0 transition-opacity duration-200 
         ${isHoveringUI ? "pointer-events-none opacity-90" : "pointer-events-auto"}`}
       >
-        
-        {/* Back Button (Must be pointer-events-auto to work even if model is disabled) */}
-        <div className="absolute top-0 -left-2 w-full pt-6 px-6 md:px-12 z-50 pointer-events-auto">
-          <button
-            onClick={onBack}
-            className="text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 bg-slate-50/50 backdrop-blur-sm px-2 rounded-lg"
-          >
-            &lt; Back
-          </button>
-        </div>
-
         <div className="h-[65%] w-[65%] relative flex items-center justify-center">
           {selectedModelSrc ? (
             <ModelViewer
@@ -66,13 +64,13 @@ export default function PanelAndCondition({
       {/* --- RIGHT COLUMN: INTERACTION PANEL --- */}
       <div 
         className="w-full lg:w-[450px] shrink-0 h-full bg-white border-l border-slate-200 shadow-sm z-50 flex flex-col"
-        // LOCK ACTIVATION: Mouse enter/leave toggles the 3D model's interactivity
         onMouseEnter={() => setIsHoveringUI(true)}
         onMouseLeave={() => setIsHoveringUI(false)}
       >
         
         {/* HEADER */}
-        <div className="p-6 md:p-8 shrink-0 bg-white z-10 border-b border-slate-100">
+        <div className="p-6 md:p-8 shrink-0 bg-white z-10 border-b border-slate-100 pt-16 lg:pt-8"> 
+        {/* Added pt-16 on mobile to prevent Back Button from overlapping text */}
           <h2 className="font-extrabold text-3xl mb-1 uppercase text-slate-900 leading-tight">
             {activeBodyArea}
           </h2>
@@ -89,7 +87,6 @@ export default function PanelAndCondition({
             <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2 pl-1">
               Panel
             </label>
-            {/* Panel List Container */}
             <div className="flex-1 border border-slate-200 rounded-xl overflow-hidden shadow-sm relative flex flex-col">
               <div className="flex-1 overflow-y-auto custom-scrollbar">
                 <TypingSelection
@@ -114,7 +111,6 @@ export default function PanelAndCondition({
               <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2 pl-1">
                 Condition
               </label>
-              {/* Condition List Container */}
               <div className="flex-1 border border-slate-200 rounded-xl overflow-hidden shadow-sm relative flex flex-col bg-white">
                 <div className="flex-1 overflow-y-auto custom-scrollbar">
                   <TypingSelection

@@ -1,65 +1,97 @@
 import ModelViewer from "../ui/model-viewer";
 
-export default function ScenarioSelection({ scenarios, selectedModelSrc, onBack, onScenarioSelect }) {
+export default function ScenarioSelection({ 
+  scenarios, 
+  selectedModelSrc, 
+  onBack, 
+  onScenarioSelect 
+}) {
   return (
-    <div className="absolute inset-0 flex flex-col p-8 animate-[fadeIn_0.5s_ease-in-out]">
-      <button
-        onClick={onBack}
-        aria-label="Back"
-        className="absolute left-8 top-8 text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-20"
-      >
-        &lt; Back
-      </button>
+    <div className="flex flex-col lg:flex-row w-full h-screen relative overflow-hidden bg-slate-50">
+      
+      {/* 1. BACK BUTTON (Position preserved as requested) */}
+      <div className="absolute top-0 -left-2 w-full pt-6 px-6 md:px-12 z-50 pointer-events-none">
+        <button
+          onClick={onBack}
+          className="pointer-events-auto text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 bg-slate-50/50 backdrop-blur-sm px-2 rounded-lg"
+        >
+          &lt; Back
+        </button>
+      </div>
 
-      <div className="flex flex-col items-center w-full h-full mt-4">
-        <h2 className="text-4xl font-bold text-black mb-8">Choose your scenario</h2>
-
-        <div className="flex w-full gap-8 h-full">
-          {/* Left Side: 3D Model Preview */}
-          <div className="w-1/3 flex items-center justify-center">
-            <div className="w-64 h-64 rounded-full bg-gray-200/50 border-2 border-white/50 flex items-center justify-center overflow-hidden relative shadow-inner">
-              <ModelViewer
+      {/* 2. LEFT: 3D Model Preview (Desktop Only) */}
+      <div className="hidden lg:flex lg:w-[35%] h-full relative bg-slate-100/50 items-center justify-center overflow-hidden border-r border-slate-200">
+        <div className="h-[55%] w-[55%] relative flex items-center justify-center">
+          <div className="w-full h-full rounded-full border border-white/50 shadow-inner bg-white/40 backdrop-blur-sm relative overflow-hidden p-6">
+             <ModelViewer
                 src={selectedModelSrc}
-                alt="3D Model"
+                alt="3D Model Reference"
                 cameraControls={true}
                 disableZoom={true}
+                className="w-full h-full"
               />
-            </div>
           </div>
+        </div>
+      </div>
 
-          {/* Right Side: Scenario List */}
-          <div className="w-2/3 overflow-y-auto pr-4 custom-scrollbar">
-            <table className="w-full border-collapse">
-              <thead className="sticky top-0 bg-white/95 backdrop-blur-sm z-10">
-                <tr className="border-b-2 border-black/10">
-                  <th className="text-left p-4 text-xl font-semibold text-black/70 w-32">Variant ID</th>
-                  <th className="text-left p-4 text-xl font-semibold text-black/70">Scenario Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {scenarios.map((item, index) => (
-                  <tr
-                    key={item.scenario_id || index}
-                    className="border-b border-black/5 hover:bg-blue-50/50 transition-colors cursor-pointer group"
-                    onClick={() => onScenarioSelect(item)}
-                  >
-                    <td className="p-4 text-lg font-medium text-slate-500 group-hover:text-blue-600">
+      {/* 3. RIGHT: Scenario List */}
+      <div className="w-full lg:w-[65%] h-full bg-white flex flex-col z-10 shadow-sm">
+        
+        {/* Header */}
+        <div className="pt-24 px-6 md:px-10 pb-6 shrink-0 border-b border-slate-100 bg-white z-20">
+          <h2 className="font-extrabold text-3xl mb-2 uppercase text-slate-900 leading-tight">
+            SELECT SCENARIO
+          </h2>
+          <p className="text-slate-500 text-sm">
+            Choose a specific clinical variant to proceed with the assessment.
+          </p>
+        </div>
+
+        {/* Scrollable Table Area */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar relative">
+          <table className="w-full border-collapse text-left">
+            <thead className="sticky top-0 bg-white/95 backdrop-blur-md z-10 shadow-sm">
+              <tr>
+                {/* ID HEADER: Reduced width (w-20) and padding (pl-4) on mobile */}
+                <th className="py-4 pl-4 md:pl-10 pr-2 md:pr-4 text-xs font-bold text-slate-400 uppercase tracking-widest w-20 md:w-32 border-b border-slate-100">
+                  ID
+                </th>
+                {/* DESCRIPTION HEADER: Reduced left padding (pl-2) to maximize width */}
+                <th className="py-4 pl-2 pr-4 md:pr-10 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                  Description
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {scenarios.map((item, index) => (
+                <tr
+                  key={item.scenario_id || index}
+                  onClick={() => onScenarioSelect(item)}
+                  className="group cursor-pointer hover:bg-slate-50 transition-colors duration-150"
+                >
+                  {/* ID CELL */}
+                  <td className="py-5 pl-4 md:pl-10 pr-2 md:pr-4 align-top">
+                    <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-md text-sm font-medium bg-slate-100 text-slate-600 group-hover:bg-blue-100 group-hover:text-blue-700 transition-colors whitespace-nowrap">
                       {item.scenario_id}
-                    </td>
-                    <td className="p-4 text-lg text-black/80 group-hover:text-black">
+                    </span>
+                  </td>
+                  {/* DESCRIPTION CELL */}
+                  <td className="py-5 pl-2 pr-4 md:pr-10 align-top">
+                    <p className="text-base text-slate-700 leading-relaxed group-hover:text-slate-900 font-medium transition-colors">
                       {item.scenario}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            
-            {scenarios.length === 0 && (
-              <div className="w-full py-10 text-center text-gray-400 italic">
-                No scenarios found for the selected condition.
-              </div>
-            )}
-          </div>
+                    </p>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Empty State */}
+          {scenarios.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-64 text-slate-400">
+              <p className="italic">No scenarios found.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

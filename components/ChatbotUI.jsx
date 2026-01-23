@@ -283,6 +283,7 @@ const ChatbotUI = () => {
         return (
           <ResultsView
             results={results}
+            scenario={selectedScenario}
             showNotAppropriate={showNotAppropriate}
             onBack={handleBackFromResults}
             onToggleNotAppropriate={handleToggleNotAppropriate}
