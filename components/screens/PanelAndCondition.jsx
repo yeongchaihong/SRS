@@ -20,18 +20,8 @@ export default function PanelAndCondition({
   const [isHoveringUI, setIsHoveringUI] = useState(false);
 
   return (
-    <div className="flex flex-col lg:flex-row w-full h-screen relative overflow-hidden bg-slate-50">
-      
-      {/* --- 1. BACK BUTTON (Moved to Root) --- */}
-      {/* Placed here so it sits at the top-left on BOTH Mobile and Desktop, independent of columns */}
-      <div className="absolute top-0 -left-2 w-full pt-6 px-6 md:px-12 z-60 pointer-events-none">
-        <button
-          onClick={onBack}
-          className="pointer-events-auto text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 bg-slate-50/50 backdrop-blur-sm px-2 rounded-lg"
-        >
-          &lt; Back
-        </button>
-      </div>
+    <div className="flex flex-col lg:flex-row w-full h-screen relative overflow-hidden bg-white md:pt-0">
+    
 
       {/* --- LEFT COLUMN: 3D MODEL --- */}
       <div 
@@ -63,7 +53,7 @@ export default function PanelAndCondition({
 
       {/* --- RIGHT COLUMN: INTERACTION PANEL --- */}
       <div 
-        className="w-full lg:w-[450px] shrink-0 h-full bg-white border-l border-slate-200 shadow-sm z-50 flex flex-col"
+        className="w-full lg:w-[450px] shrink-0 h-full bg-white  border-slate-200 shadow-sm z-50 flex flex-col pt-8 md:pt-0"
         onMouseEnter={() => setIsHoveringUI(true)}
         onMouseLeave={() => setIsHoveringUI(false)}
       >
@@ -71,9 +61,17 @@ export default function PanelAndCondition({
         {/* HEADER */}
         <div className="p-6 md:p-8 shrink-0 bg-white z-10 border-b border-slate-100 pt-16 lg:pt-8"> 
         {/* Added pt-16 on mobile to prevent Back Button from overlapping text */}
-          <h2 className="font-extrabold text-3xl mb-1 uppercase text-slate-900 leading-tight">
+        <div className="flex flex-row items mb-1">
+          <button
+            onClick={onBack}
+            className="text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-20 pr-2 md:hidden"
+          >
+            &lt;
+          </button>
+          <h2 className="font-extrabold text-3xl uppercase text-slate-900 leading-tight">
             {activeBodyArea}
           </h2>
+        </div>
           <p className="text-slate-500 text-sm">
             Select the specific panel and condition observed.
           </p>

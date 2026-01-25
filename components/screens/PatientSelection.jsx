@@ -3,23 +3,20 @@ import { ECGLine } from "../ui/ecg-line";
 
 export default function PatientSelection({ onPatientSelect, onBack }) {
   return (
-    <div className="flex flex-col items-center bg-white h-screen">
-      <div className="flex w-full pt-6 px-6 md:px-12">
-        <button
-          onClick={onBack}
-          aria-label="Back"
-          className="text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-20"
-        >
-          &lt; Back
-        </button>
-      </div>
+    <div className="flex flex-col items-center bg-white h-screen pt-8 md:pt-13">
 
       <div className="flex flex-col justify-center pb-18">
         {/* <HandWrittenTitle
           title="PATIENT TYPE"
           subtitle="Please select patient age group."
         /> */}
-        <div className="flex items-center md:gap-4 flex-col pt-15">
+        <div className="flex items-center md:gap-4 flex-row pt-15">
+          <button
+            onClick={onBack}
+            className="text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-20 pr-2 md:hidden"
+          >
+            &lt;
+          </button>
           <h1 className="font-extrabold text-4xl">PATIENT TYPE</h1>
         </div>
         <div className="flex items-center  md:gap-4 flex-col">

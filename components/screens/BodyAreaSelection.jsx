@@ -73,22 +73,21 @@ export default function BodyAreaSelection({
   }, [availableAreas, searchTerm]);
 
   return (
-    <div className="flex flex-col w-full h-full relative overflow-hidden bg-slate-50">
-      {/* Back Button */}
-      <div className="flex w-full pt-6 px-6 md:px-12">
-        <button
-          onClick={onBack}
-          className="text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-20"
-        >
-          &lt; Back
-        </button>
-      </div>
+    <div className="flex flex-col w-full h-full relative overflow-hidden bg-slate-50 pt-18 md:pt-23">
 
       {/* Header & Search Bar */}
       <div className="flex flex-col items-center pt-6 px-6">
-        <h1 className="font-extrabold md:text-4xl text-2xl mb-4">
+        <div className="flex flex-row items mb-4">
+            <button
+              onClick={onBack}
+              className="text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-20 pr-2 md:hidden"
+            >
+              &lt;
+            </button>
+                    <h1 className="font-extrabold md:text-4xl text-2xl">
           CHOOSE BODY AREA
         </h1>
+        </div>
 
         {/* Search Bar */}
         <div className="w-full max-w-md mb-6 relative">

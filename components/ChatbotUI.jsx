@@ -5,9 +5,11 @@ import { AnimatePresence } from "framer-motion";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import PatientSelection from "./screens/PatientSelection";
 import BodyAreaSelection from "./screens/BodyAreaSelection";
-import PanelAndCondition from "./screens/PanelAndCondition"; 
+import PanelAndCondition from "./screens/PanelAndCondition";
 import ScenarioSelection from "./screens/ScenarioSelection";
 import ResultsView from "./screens/ResultsView";
+import Sidebar from "./ui/Sidebar";
+import GlobalBackButton from "./ui/GlobalBackButton";
 
 const ChatbotUI = () => {
   // --- UI State ---
@@ -16,13 +18,13 @@ const ChatbotUI = () => {
   const [showBodyArea, setShowBodyArea] = useState(false);
   const [showPanelAndCondition, setShowPanelAndCondition] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // --- 3D Model State ---
   const [selectedModelSrc, setSelectedModelSrc] = useState(null);
   const [modelCentered, setModelCentered] = useState(true);
   const [hasMoved, setHasMoved] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
-  
+
   // --- Selection State ---
   const [activeBodyArea, setActiveBodyArea] = useState(null);
   const [panels, setPanels] = useState([]);
@@ -32,22 +34,26 @@ const ChatbotUI = () => {
   const [scenarios, setScenarios] = useState([]);
   const [showScenarioSelection, setShowScenarioSelection] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState(null);
-  
+
   // --- Data & Results State ---
-  const [masterData, setMasterData] = useState([]); 
+  const [masterData, setMasterData] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState([]);
   const [allFetchedResults, setAllFetchedResults] = useState({ usually: [], maybe: [], rarely: [] });
   const [showNotAppropriate, setShowNotAppropriate] = useState(false);
 
-  // --- Helpers & Effects (Unchanged) ---
+  // --- Sidebar & Favorites State ---
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // --- Helpers & Effects ---
   const isAgeApplicable = (dbAgeString, patientType) => {
     if (!dbAgeString) return true;
     if (!patientType) return true;
     try {
       const cleanStr = String(dbAgeString).trim();
       const parts = cleanStr.split('-').map(s => parseInt(s.trim()));
-      if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) return true; 
+      if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) return true;
       const [min, max] = parts;
       return patientType === 'adult' ? max >= 18 : min < 18;
     } catch (e) { return true; }
@@ -99,6 +105,7 @@ const ChatbotUI = () => {
     }
   }, [activeBodyArea, ageFilteredData]);
 
+  // IMPORTANT FIX: Removed setSelectedCondition(null) from here to prevent wiping state on history restore
   useEffect(() => {
     if (selectedPanel && ageFilteredData.length > 0) {
       const relevantRows = ageFilteredData.filter(item => {
@@ -108,14 +115,14 @@ const ChatbotUI = () => {
       const uniqueConditions = [];
       const seenConditions = new Set();
       relevantRows.forEach(item => {
-        const conditionLabel = item.condition; 
+        const conditionLabel = item.condition;
         if (conditionLabel && !seenConditions.has(conditionLabel)) {
           seenConditions.add(conditionLabel);
           uniqueConditions.push({ label: conditionLabel, severity: 'normal' });
         }
       });
       setConditions(uniqueConditions);
-      setSelectedCondition(null);
+      // setSelectedCondition(null); // <--- REMOVED THIS LINE
     }
   }, [selectedPanel, activeBodyArea, ageFilteredData]);
 
@@ -134,9 +141,18 @@ const ChatbotUI = () => {
     }
   }, [showPanelAndCondition]);
 
-  // --- Handlers (Unchanged) ---
+  // Check Favorites Status
+  useEffect(() => {
+    if (selectedScenario) {
+      const favorites = JSON.parse(localStorage.getItem("favorite_referrals") || "[]");
+      const exists = favorites.some(f => f.scenario.scenario_id === selectedScenario.scenario_id);
+      setIsFavorite(exists);
+    }
+  }, [selectedScenario]);
+
+  // --- Handlers ---
   const handleStart = () => setIsStarted(true);
-  
+
   const handlePatientSelect = (type) => {
     setSelectedPatient(type);
     setShowBodyArea(true);
@@ -180,22 +196,27 @@ const ChatbotUI = () => {
     }
   };
 
-  const handlePanelSelect = (panel) => setSelectedPanel(panel);
+  // IMPORTANT FIX: Reset condition here on manual panel change
+  const handlePanelSelect = (panel) => {
+    setSelectedPanel(panel);
+    setSelectedCondition(null); 
+  };
+  
   const handleConditionSelect = (condition) => setSelectedCondition(condition);
 
   const handleNext = () => {
     if (selectedCondition && ageFilteredData.length > 0) {
       const relevantRows = ageFilteredData.filter(item => {
         const area = item["Body Area"] || item.body_area;
-        return (area && area.toLowerCase() === activeBodyArea.toLowerCase()) && 
-        item.panel === selectedPanel &&
-        item.condition === selectedCondition;
+        return (area && area.toLowerCase() === activeBodyArea.toLowerCase()) &&
+          item.panel === selectedPanel &&
+          item.condition === selectedCondition;
       });
 
       const uniqueScenarios = relevantRows.map(item => ({
-        scenario_id: item.scenario_id, 
+        scenario_id: item.scenario_id,
         scenario: item.scenario_description || "Default Scenario",
-        fullObject: item 
+        fullObject: item
       }));
 
       setScenarios(uniqueScenarios);
@@ -203,10 +224,12 @@ const ChatbotUI = () => {
     }
   };
 
+  // --- ROBUST HISTORY SAVING ---
   const handleScenarioSelect = (scenarioObj) => {
     setSelectedScenario(scenarioObj);
+
+    // 1. Process Procedures
     const procedures = scenarioObj.fullObject?.procedures || [];
-    
     if (procedures.length > 0) {
       const processed = procedures.map(proc => {
         let app = 'unknown';
@@ -217,7 +240,7 @@ const ChatbotUI = () => {
 
         return {
           procedure_name: proc.procedure_name,
-          rating: proc.adult_rrl || proc.peds_rrl || '', 
+          rating: proc.adult_rrl || proc.peds_rrl || '',
           appropriate: app,
           original_category: proc.appropriateness_category
         };
@@ -235,6 +258,31 @@ const ChatbotUI = () => {
       setResults([]);
       setShowResults(true);
     }
+
+    // 2. Save to History (Robust Condition Extraction)
+    const reliableCondition = 
+      scenarioObj.fullObject?.condition || 
+      scenarioObj.fullObject?.Condition || 
+      selectedCondition || 
+      scenarioObj.fullObject?.panel || 
+      "General Referral";
+
+    const historyItem = {
+      id: Date.now(),
+      timestamp: new Date().toLocaleString(),
+      patientType: selectedPatient,
+      bodyArea: activeBodyArea,
+      panel: selectedPanel,
+      condition: reliableCondition, // Ensures title is saved correctly
+      scenario: scenarioObj,
+    };
+
+    const existingHistory = JSON.parse(localStorage.getItem("recent_referrals") || "[]");
+    // Avoid duplicates
+    const filteredHistory = existingHistory.filter(h => h.scenario.scenario_id !== scenarioObj.scenario_id);
+    const updatedHistory = [historyItem, ...filteredHistory].slice(0, 15);
+    
+    localStorage.setItem("recent_referrals", JSON.stringify(updatedHistory));
   };
 
   const handleBackFromScenario = () => {
@@ -274,10 +322,100 @@ const ChatbotUI = () => {
     setSelectedScenario(null);
   };
 
-  // --- VIEW LOGIC: The Switch Statement ---
+  const handleSelectFromHistory = (historyItem) => {
+    // 1. Restore State
+    setSelectedPatient(historyItem.patientType);
+    setActiveBodyArea(historyItem.bodyArea);
+    setSelectedPanel(historyItem.panel);
+    // CRITICAL: Restore condition so Favorites work
+    setSelectedCondition(historyItem.condition);
+    setSelectedScenario(historyItem.scenario);
+
+    // 2. Re-process Procedures
+    const procedures = historyItem.scenario.fullObject?.procedures || [];
+    if (procedures.length > 0) {
+      const processed = procedures.map(proc => {
+        let app = 'unknown';
+        const cat = proc.appropriateness_category ? proc.appropriateness_category.toLowerCase() : '';
+        if (cat.includes('usually not')) app = 'rarely';
+        else if (cat.includes('usually appropriate')) app = 'usually';
+        else if (cat.includes('may be')) app = 'maybe';
+
+        return {
+          procedure_name: proc.procedure_name,
+          rating: proc.adult_rrl || proc.peds_rrl || '',
+          appropriate: app,
+          original_category: proc.appropriateness_category
+        };
+      });
+
+      const usually = processed.filter(i => i.appropriate === 'usually');
+      const maybe = processed.filter(i => i.appropriate === 'maybe');
+      const rarely = processed.filter(i => i.appropriate === 'rarely' || i.appropriate === 'unknown');
+
+      setAllFetchedResults({ usually, maybe, rarely });
+      setResults([...usually, ...maybe]);
+      setShowNotAppropriate(false);
+      setShowResults(true);
+    } else {
+      setResults([]);
+      setShowResults(true);
+    }
+
+    setIsStarted(true);
+    setIsSidebarOpen(false);
+  };
+
+  // --- ROBUST FAVORITES SAVING ---
+  const handleToggleFavorite = () => {
+    if (!selectedScenario) return;
+
+    const favorites = JSON.parse(localStorage.getItem("favorite_referrals") || "[]");
+    const exists = favorites.some(f => f.scenario.scenario_id === selectedScenario.scenario_id);
+
+    if (exists) {
+      // Remove it
+      const newFavorites = favorites.filter(f => f.scenario.scenario_id !== selectedScenario.scenario_id);
+      localStorage.setItem("favorite_referrals", JSON.stringify(newFavorites));
+      setIsFavorite(false);
+    } else {
+      // Add it - Robust Logic
+      const reliableCondition = 
+        selectedCondition || 
+        selectedScenario.fullObject?.condition || 
+        selectedScenario.fullObject?.Condition || 
+        selectedScenario.fullObject?.panel || 
+        "General Referral";
+
+      const newFav = {
+        id: Date.now(),
+        patientType: selectedPatient,
+        bodyArea: activeBodyArea,
+        panel: selectedPanel,
+        condition: reliableCondition, // <--- Using robust variable
+        scenario: selectedScenario
+      };
+      
+      console.log("Adding to favorites:", newFav);
+      localStorage.setItem("favorite_referrals", JSON.stringify([newFav, ...favorites]));
+      setIsFavorite(true);
+    }
+  };
+
+  const handleGlobalBack = () => {
+    if (showResults) return handleBackFromResults();
+    if (showScenarioSelection) return handleBackFromScenario();
+    if (showPanelAndCondition) return handleBack3D({ stopPropagation: () => {} });
+    if (showBodyArea) return handleBack();
+    if (isStarted && !showBodyArea) {
+      setIsStarted(false);
+      setSelectedPatient(null);
+      return;
+    }
+  };
+
+  // --- VIEW LOGIC ---
   const renderActiveView = () => {
-    // We use "switch (true)" to evaluate boolean conditions in priority order.
-    // This replaces the nested ternaries.
     switch (true) {
       case showResults:
         return (
@@ -288,6 +426,8 @@ const ChatbotUI = () => {
             onBack={handleBackFromResults}
             onToggleNotAppropriate={handleToggleNotAppropriate}
             onStartAgain={handleStartAgain}
+            isFavorite={isFavorite}
+            onToggleFavorite={handleToggleFavorite}
           />
         );
 
@@ -310,7 +450,6 @@ const ChatbotUI = () => {
           />
         );
 
-      // Default Case: Show Body Area + 3D Panels (The complex view)
       default:
         return (
           <div className="absolute inset-0 flex flex-col animate-[fadeIn_0.5s_ease-in-out] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[length:16px_16px]">
@@ -351,6 +490,39 @@ const ChatbotUI = () => {
   // --- Main Render ---
   return (
     <div className="min-h-screen w-full relative overflow-hidden font-sans text-black bg-white">
+      
+      {isStarted && !isLoading && (
+        <div className="fixed top-8 left-4 md:top-6 md:left-6 z-[100] flex flex-row gap-3 md:gap-4 items-center md:items-start">
+          
+          {/* Sidebar Toggle */}
+          <button 
+            onClick={() => setIsSidebarOpen(true)}
+            className="bg-white/90 backdrop-blur-md border border-slate-200 p-2.5 md:p-3 rounded-full shadow-lg hover:scale-110 transition-all text-slate-600 active:scale-95 shrink-0"
+            aria-label="Open History"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" className="md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+
+          {/* Global Back Button */}
+          <button
+            onClick={handleGlobalBack}
+            className="hidden md:flex py-1.5 px-3 md:py-2 md:px-2 md:mt-0.5 rounded-xl hover:scale-105 transition-all text-black font-semibold text-base md:text-lg active:scale-95 shrink-0"
+          >
+            &lt; Back
+          </button>
+        </div>
+      )}
+
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        onClose={() => setIsSidebarOpen(false)} 
+        onSelectHistory={handleSelectFromHistory}
+      />
+      
       {!isStarted ? (
         <WelcomeScreen onStart={handleStart} />
       ) : isLoading ? (

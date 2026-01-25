@@ -9,15 +9,6 @@ export default function ScenarioSelection({
   return (
     <div className="flex flex-col lg:flex-row w-full h-screen relative overflow-hidden bg-slate-50">
       
-      {/* 1. BACK BUTTON (Position preserved as requested) */}
-      <div className="absolute top-0 -left-2 w-full pt-6 px-6 md:px-12 z-50 pointer-events-none">
-        <button
-          onClick={onBack}
-          className="pointer-events-auto text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 bg-slate-50/50 backdrop-blur-sm px-2 rounded-lg"
-        >
-          &lt; Back
-        </button>
-      </div>
 
       {/* 2. LEFT: 3D Model Preview (Desktop Only) */}
       <div className="hidden lg:flex lg:w-[35%] h-full relative bg-slate-100/50 items-center justify-center overflow-hidden border-r border-slate-200">
@@ -39,9 +30,17 @@ export default function ScenarioSelection({
         
         {/* Header */}
         <div className="pt-24 px-6 md:px-10 pb-6 shrink-0 border-b border-slate-100 bg-white z-20">
-          <h2 className="font-extrabold text-3xl mb-2 uppercase text-slate-900 leading-tight">
-            SELECT SCENARIO
-          </h2>
+          <div className="flex flex-row items mb-2">
+            <button
+            onClick={onBack}
+            className="text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-20 pr-2 md:hidden"
+          >
+            &lt;
+          </button>
+            <h2 className="font-extrabold text-3xl uppercase text-slate-900 leading-tight">
+              SELECT SCENARIO
+            </h2>
+          </div>
           <p className="text-slate-500 text-sm">
             Choose a specific clinical variant to proceed with the assessment.
           </p>

@@ -6,7 +6,10 @@ export default function ResultsView({
   showNotAppropriate,
   onBack, 
   onToggleNotAppropriate, 
-  onStartAgain 
+  onStartAgain,
+  // NEW PROPS
+  isFavorite, 
+  onToggleFavorite 
 }) {
 
   // Helper: Convert radiation string to score
@@ -23,48 +26,69 @@ export default function ResultsView({
     return 1;
   };
 
-  // Filter results based on toggle state
   const visibleResults = useMemo(() => {
     if (showNotAppropriate) return results;
     return results.filter(r => r.appropriate !== 'not' && r.appropriate !== 'usually_not');
   }, [results, showNotAppropriate]);
 
+  // Reusable Star Icon Component
+  const StarIcon = () => (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      viewBox="0 0 24 24" 
+      fill={isFavorite ? "currentColor" : "none"} 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={`w-5 h-5 transition-all duration-200 ${
+        isFavorite ? "text-yellow-400 fill-yellow-400 scale-110" : "text-slate-300 hover:text-yellow-400"
+      }`}
+    >
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+
   return (
     <div className="flex flex-col lg:flex-row w-full h-screen relative overflow-hidden bg-slate-50">
-      
-      {/* 1. BACK BUTTON (Global) */}
-      <div className="absolute top-0 -left-2 w-full pt-6 px-6 md:px-12 z-50 pointer-events-none">
-        <button
-          onClick={onBack}
-          className="pointer-events-auto text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 bg-slate-50/50 backdrop-blur-sm px-2 rounded-lg"
-        >
-          &lt; Back
-        </button>
-      </div>
 
-      {/* =========================================================================
-          MOBILE VIEW
-         ========================================================================= */}
+      {/* ======================= MOBILE VIEW ======================= */}
       <div className="flex lg:hidden flex-col w-full h-full pt-20 px-4 pb-4 bg-slate-50">
         
         {/* Mobile Header */}
-        <div className="shrink-0 mb-4 px-2">
+        <div className="shrink-0 mb-4 px-2 pt-5 flex-row flex">
+          <button
+            onClick={onBack}
+            className="text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-20 pr-2 md:hidden"
+          >
+            &lt;
+          </button>
            <h2 className="font-extrabold text-2xl uppercase text-slate-900 leading-tight">
             Recommended Procedures
           </h2>
         </div>
 
-        {/* MAIN FLEX CONTAINER (Handles Vertical Space) */}
         <div className="flex-1 min-h-0 flex flex-col gap-4">
             
-            {/* 1. Context Area (Scenario + Controls) - Allows scrolling if screen is tiny, but stays at top usually */}
+            {/* 1. Context Area (Scenario + Controls) */}
             <div className="shrink-0 flex flex-col gap-3">
-                {/* Selected Scenario Card */}
-                <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 border-b border-slate-100 pb-1">
-                        Selected Scenario no. {scenario?.scenario_id || "N/A"}
+                
+                {/* Selected Scenario Card (Mobile) */}
+                <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm relative group">
+                    <div className="flex justify-between items-start border-b border-slate-100 pb-2 mb-2">
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                            Selected Scenario no. {scenario?.scenario_id || "N/A"}
+                        </div>
+                        {/* STAR BUTTON */}
+                        <button 
+                            onClick={onToggleFavorite}
+                            className="p-1.5 -mr-1.5 -mt-1.5 rounded-full hover:bg-slate-50 active:scale-90 transition-all"
+                            aria-label="Toggle Favorite"
+                        >
+                            <StarIcon />
+                        </button>
                     </div>
-                    <div className="text-slate-800 text-sm leading-snug font-medium line-clamp-2">
+                    <div className="text-slate-800 text-sm leading-snug font-medium line-clamp-2 pr-6">
                         {scenario?.scenario || "No description available."}
                     </div>
                 </div>
@@ -86,7 +110,6 @@ export default function ResultsView({
                         )}
                     </div>
 
-                    {/* Toggle Button */}
                     <button
                         onClick={onToggleNotAppropriate}
                         className={`px-3 py-2 rounded-lg font-bold text-[10px] uppercase tracking-wide transition-all border shrink-0 text-center
@@ -100,34 +123,24 @@ export default function ResultsView({
                 </div>
             </div>
 
-            {/* 2. THE GRAPH (Takes remaining space) */}
+            {/* 2. THE GRAPH (Mobile) */}
             <div className="flex-1 min-h-0 relative flex flex-col pl-6">
-                
-                {/* Y-Axis Label (Rotated Left) */}
                 <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 origin-center font-bold text-[10px] text-slate-400 uppercase tracking-widest pointer-events-none whitespace-nowrap">
                   Appropriateness
                 </div>
-
-                {/* Graph Box */}
                 <div className="flex-1 w-full flex flex-col border-l-2 border-b-2 border-slate-300 relative overflow-hidden bg-white rounded-tr-xl shadow-sm">
-                    
-                    {/* Internal Scroll Area for Bars */}
                     <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-4">
                         {visibleResults.length > 0 ? (
                             visibleResults.map((item, index) => {
                                 const score = getRadiationScore(item.rating);
                                 const barColor = item.appropriate === 'usually' ? 'bg-[#90EE90]' :
-                                                item.appropriate === 'maybe' ? 'bg-[#FFFFE0]' :
-                                                'bg-[#FFB6C1]';
-
+                                                 item.appropriate === 'maybe' ? 'bg-[#FFFFE0]' :
+                                                 'bg-[#FFB6C1]';
                                 return (
                                     <div key={index} className="flex flex-col w-full group">
-                                        {/* Procedure Title */}
                                         <span className="text-xs font-bold text-slate-800 leading-tight mb-1 truncate">
                                             {item.procedure_name}
                                         </span>
-                                        
-                                        {/* Bar & Badge */}
                                         <div className="flex items-center gap-2 w-full">
                                             <div
                                                 className={`h-5 rounded-r-md shadow-sm border border-black/5 ${barColor} transition-all duration-700`}
@@ -146,18 +159,14 @@ export default function ResultsView({
                             </div>
                         )}
                     </div>
-
-                    {/* X-Axis Scale (Fixed Bottom) */}
                     <div className="flex justify-between w-full text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0 px-3 py-1.5 border-t border-slate-100 bg-slate-50 shrink-0">
                       <span>Low Rad</span>
                       <span>High Rad</span>
                     </div>
                 </div>
             </div>
-
         </div>
 
-        {/* Bottom Button (Fixed Footer) */}
         <div className="pt-3 mt-auto border-t border-slate-200 bg-slate-50 shrink-0">
              <button
                 onClick={onStartAgain}
@@ -169,42 +178,34 @@ export default function ResultsView({
       </div>
 
 
-      {/* =========================================================================
-          DESKTOP VIEW (Unchanged)
-         ========================================================================= */}
+      {/* ======================= DESKTOP VIEW ======================= */}
       <div className="hidden lg:flex flex-1 h-full relative">
           
           {/* 2. LEFT: Graph Visualization Area */}
           <div className="flex-1 h-full relative bg-slate-100/50 flex flex-col overflow-hidden border-r border-slate-200 pt-24 px-8 pb-8">
-            
-            {/* Header */}
             <div className="shrink-0 mb-8">
                <h2 className="font-extrabold text-3xl mb-2 uppercase text-slate-900 leading-tight">
                 Recommended Procedures
               </h2>
             </div>
 
-            {/* --- THE GRAPH CONTAINER --- */}
             <div className="flex-1 min-h-0 relative flex flex-col pl-8">
-                
                 <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 origin-center font-bold text-sm text-slate-400 uppercase tracking-widest pointer-events-none whitespace-nowrap">
                   Appropriateness
                 </div>
-
                 <div className="flex-1 w-full flex flex-col border-l-2 border-b-2 border-slate-300 relative overflow-hidden bg-white/40 rounded-tr-xl">
                     <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
                       {visibleResults.length > 0 ? (
                           visibleResults.map((item, index) => {
                           const score = getRadiationScore(item.rating);
                           const barColor = item.appropriate === 'usually' ? 'bg-[#90EE90]' :
-                                           item.appropriate === 'maybe' ? 'bg-[#FFFFE0]' :
-                                           'bg-[#FFB6C1]';
+                                             item.appropriate === 'maybe' ? 'bg-[#FFFFE0]' :
+                                             'bg-[#FFB6C1]';
                           return (
                               <div key={index} className="flex flex-col gap-1 w-full group">
                                   <span className="text-sm font-bold text-slate-800 ml-1 leading-tight truncate">
                                       {item.procedure_name}
                                   </span>
-
                                   <div className="flex items-center gap-3 w-full">
                                       <div
                                           className={`h-9 rounded-r-lg shadow-sm border border-black/5 transition-all duration-1000 ease-out relative group-hover:shadow-md ${barColor}`}
@@ -235,7 +236,28 @@ export default function ResultsView({
 
           {/* 3. RIGHT: Sidebar Controls & Legend */}
           <div className="w-[400px] shrink-0 h-full bg-white flex flex-col shadow-xl z-20">
-            <div className="p-8 border-b border-slate-100 flex-1 overflow-y-auto">
+            <div className="p-8 border-b border-slate-100 flex-1 overflow-y-auto custom-scrollbar">
+              
+              {/* --- Selected Scenario Card (Desktop) --- */}
+              <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 mb-8 relative">
+                  <div className="flex justify-between items-center border-b border-slate-200 pb-2 mb-2">
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                          Selected Scenario no. {scenario?.scenario_id || "N/A"}
+                      </div>
+                      {/* STAR BUTTON */}
+                      <button 
+                          onClick={onToggleFavorite}
+                          className="p-1.5 -mr-1.5 rounded-full hover:bg-white hover:shadow-sm active:scale-90 transition-all"
+                          aria-label="Toggle Favorite"
+                      >
+                          <StarIcon />
+                      </button>
+                  </div>
+                  <div className="text-slate-800 text-sm leading-relaxed font-medium">
+                      {scenario?.scenario || "No description available."}
+                  </div>
+              </div>
+
               <h3 className="font-bold text-slate-400 uppercase tracking-widest text-xs mb-6">Legend</h3>
               <div className="space-y-5 bg-slate-50 p-6 rounded-xl">
                 <div className="flex items-center gap-4">
