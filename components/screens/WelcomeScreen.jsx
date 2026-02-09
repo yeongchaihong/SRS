@@ -89,7 +89,7 @@ export default function WelcomeScreen({ onStart }) {
 
   // Mobile view
   const renderMobile = () => (
-    <div className="bg-white h-screen w-full flex flex-col items-center mt-8">
+    <div className="bg-white h-screen w-full flex flex-col items-center pt-8">
       {/* Text on top */}
       <div className="flex flex-col items-center w-full gap-0 mt-15">
         <motion.div animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }} transition={{ duration: 9, repeat: Infinity }}>
