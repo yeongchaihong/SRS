@@ -1,7 +1,7 @@
 {
   "id": "/?source=pwa",
   "name": "Smart Referral System",
-  "short_name": "App",
+  "short_name": "SRS",
   "description": "Decision Wizard for Radiological Examination",
   "start_url": "/",
   "display": "standalone",
