@@ -518,10 +518,10 @@ body,
 }
 
 .premium-option-card:hover {
-  background: rgba(255, 255, 255, 0.8);
+  background: #e6e6e8;
   transform: translateY(-2px) scale(1.01);
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
-  border-color: rgba(255, 255, 255, 0.8);
+  border-color: #e6e6e8;
 }
 
 .premium-option-card.selected {

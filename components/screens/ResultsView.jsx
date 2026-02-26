@@ -53,7 +53,7 @@ export default function ResultsView({
     <div className="flex flex-col lg:flex-row w-full h-screen relative overflow-hidden bg-slate-50">
 
       {/* ======================= MOBILE VIEW ======================= */}
-      <div className="flex lg:hidden flex-col w-full h-full pt-20 px-4 pb-4 bg-slate-50">
+      <div className="flex lg:hidden flex-col w-full h-full pt-20 px-4 pb-4" style={{background: "radial-gradient(125% 125% at 50% 90%, #fff 40%, #4180de 100%)"}}>
         
         {/* Mobile Header */}
         <div className="shrink-0 mb-4 px-2 pt-5 flex-row flex">
@@ -63,7 +63,7 @@ export default function ResultsView({
           >
             &lt;
           </button>
-           <h2 className="font-extrabold text-2xl uppercase text-slate-900 leading-tight">
+           <h2 className="font-extrabold text-2xl uppercase text-slate-900 leading-ti3010035ght">
             Recommended Procedures
           </h2>
         </div>
@@ -235,8 +235,8 @@ export default function ResultsView({
           </div>
 
           {/* 3. RIGHT: Sidebar Controls & Legend */}
-          <div className="w-[400px] shrink-0 h-full bg-white flex flex-col shadow-xl z-20">
-            <div className="p-8 border-b border-slate-100 flex-1 overflow-y-auto custom-scrollbar">
+          <div className="w-[400px] shrink-0 h-full bg-blue-200 flex flex-col shadow-xl z-20">
+            <div className="p-8 flex-1 overflow-y-auto custom-scrollbar">
               
               {/* --- Selected Scenario Card (Desktop) --- */}
               <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 mb-8 relative">
@@ -274,7 +274,7 @@ export default function ResultsView({
                 </div>
               </div>
             </div>
-            <div className="p-8 mt-auto space-y-4 bg-white border-t border-slate-100 shrink-0">
+            <div className="p-8 mt-auto space-y-4 bg-blue-200 shrink-0">
               <button
                 onClick={onToggleNotAppropriate}
                 className={`w-full py-4 rounded-xl font-bold text-sm uppercase tracking-wide transition-all border flex items-center justify-center gap-2
@@ -287,7 +287,7 @@ export default function ResultsView({
               </button>
               <button
                 onClick={onStartAgain}
-                className="w-full py-4 rounded-xl font-bold text-lg text-white bg-slate-900 hover:bg-black shadow-lg shadow-slate-300 transform transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-xl font-bold text-lg text-white bg-slate-900 hover:bg-black shadow-lg shadow-slate-500 transform transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 <span>Start Again</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">

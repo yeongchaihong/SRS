@@ -30,8 +30,7 @@ export default function BodyAreaSelection({
 }) {
   // 1. State for the Search Bar
   const [searchTerm, setSearchTerm] = useState("");
-  // 2. State for Multi-Select Mode
-  const [isMultiSelect, setIsMultiSelect] = useState(false);
+  // 2. State for Multi-Select Mode (always enabled)
   const [selectedAreas, setSelectedAreas] = useState([]);
 
   // 3. Process masterData into a unique list of available areas
@@ -76,18 +75,7 @@ export default function BodyAreaSelection({
     );
   }, [availableAreas, searchTerm]);
 
-  // 5. Multi-select toggle handler
-  const toggleMultiSelect = () => {
-    setIsMultiSelect((prev) => {
-      if (prev) {
-        // Turning OFF multi-select — clear selections
-        setSelectedAreas([]);
-      }
-      return !prev;
-    });
-  };
-
-  // 6. Toggle an area in the selected list
+  // 5. Toggle an area in the selected list
   const toggleAreaSelection = (areaItem) => {
     setSelectedAreas((prev) => {
       const exists = prev.find(
@@ -103,35 +91,39 @@ export default function BodyAreaSelection({
     });
   };
 
-  // 7. Handle area click (single or multi)
+  // 6. Handle area click (always multi-select)
   const handleAreaClick = (item, e) => {
     e.stopPropagation();
-    if (isMultiSelect) {
-      toggleAreaSelection(item);
-    } else {
-      onBodyAreaSelect(item.name, item.model);
-    }
+    toggleAreaSelection(item);
   };
 
-  // 8. Check if area is selected
+  // 7. Check if area is selected
   const isAreaSelected = (areaName) => {
     return selectedAreas.some(
       (a) => a.name.toLowerCase() === areaName.toLowerCase()
     );
   };
 
-  // 9. Handle continue with multi-select
-  const handleContinueMulti = () => {
+  // 8. Handle next step with selected areas
+  const handleNext = () => {
     if (selectedAreas.length > 0 && onMultiBodyAreaSelect) {
       onMultiBodyAreaSelect(selectedAreas);
     }
   };
 
   return (
-    <div className="flex flex-col w-full h-full relative overflow-hidden bg-slate-50 pt-18 md:pt-23">
+    <div 
+      className="flex flex-col w-full h-full relative overflow-hidden pt-18 md:pt-23"
+      style={{
+        backgroundImage: "radial-gradient(circle at center, #93c5fd, transparent)",
+        backgroundColor: "#fff",
+      }}
+    >
+      {/* Mobile background */}
+      <div className="absolute inset-0 z-0 lg:hidden" style={{background: "radial-gradient(125% 125% at 50% 90%, #fff 40%, #4180de 100%)"}}/>
 
       {/* Header & Search Bar */}
-      <div className="flex flex-col items-center pt-6 px-6">
+      <div className="flex flex-col items-center pt-6 px-6 relative z-10">
         <div className="flex flex-row items-center mb-4 gap-2">
           <button
             onClick={onBack}
@@ -142,49 +134,7 @@ export default function BodyAreaSelection({
           <h1 className="font-extrabold md:text-4xl text-2xl">
             CHOOSE BODY AREA
           </h1>
-
-          {/* Multi-Select Toggle Button */}
-          <button
-            onClick={toggleMultiSelect}
-            className={`
-                ml-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide
-                border-2 transition-all duration-200 flex items-center gap-1.5 shrink-0
-                ${isMultiSelect
-                ? "bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200 hover:bg-blue-700"
-                : "bg-white text-slate-500 border-slate-300 hover:border-blue-400 hover:text-blue-500"
-              }
-              `}
-            title={isMultiSelect ? "Disable multi-select" : "Enable multi-select"}
-          >
-            {/* Layers icon */}
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="12 2 2 7 12 12 22 7 12 2" />
-              <polyline points="2 17 12 22 22 17" />
-              <polyline points="2 12 12 17 22 12" />
-            </svg>
-            <span className="hidden sm:inline">{isMultiSelect ? "Multi ON" : "Multi"}</span>
-          </button>
         </div>
-
-        {/* Selected areas chips (visible in multi-select mode) */}
-        {isMultiSelect && selectedAreas.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3 justify-center max-w-2xl">
-            {selectedAreas.map((area) => (
-              <span
-                key={area.name}
-                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold border border-blue-200"
-              >
-                {area.name}
-                <button
-                  onClick={() => toggleAreaSelection(area)}
-                  className="ml-0.5 hover:text-red-500 transition-colors"
-                >
-                  ✕
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
 
         {/* Search Bar */}
         <div className="w-full max-w-md mb-6 relative">
@@ -207,10 +157,10 @@ export default function BodyAreaSelection({
       </div>
 
       {/* Main Content Wrapper */}
-      <div className="flex flex-col lg:flex-row flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-12 gap-4 lg:gap-16 items-center lg:items-start justify-center h-full pb-4 md:pb-8 z-10 overflow-hidden">
+      <div className="flex flex-col lg:flex-row flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-12 gap-4 lg:gap-16 items-center lg:items-start justify-center h-full pb-4 md:pb-8 z-10 overflow-hidden" style={{marginTop: '-5px'}}>
 
         {/* Left: Body Image Card - HIDDEN ON MOBILE/TABLET */}
-        <div className="hidden lg:flex w-full lg:w-[50%] h-full items-center justify-center relative lg:-mt-10 overflow-hidden shrink-0">
+        <div className="hidden lg:flex w-full lg:w-[50%] h-full items-center justify-start relative lg:pt-8 lg:pb-16 overflow-visible shrink-0">
           <img
             src={
               selectedPatient === "adult"
@@ -218,51 +168,37 @@ export default function BodyAreaSelection({
                 : "/photo/humanbodychild.png"
             }
             alt="Body Reference"
-            className="lg:h-[120%] w-auto object-contain lg:scale-[1.35] relative z-0"
+            className="lg:h-[110%] w-auto object-contain lg:scale-[1.35] relative z-0"
+            style={{marginTop: '15px'}}
           />
         </div>
 
         {/* Right: Grid Selection */}
         <div className="w-full lg:w-[50%] h-full flex flex-col justify-start lg:justify-center overflow-hidden">
           <div className="w-full max-h-full overflow-y-auto p-2 md:p-4 custom-scrollbar">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3 w-full pb-20 lg:pb-0">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3 w-full pb-4 lg:pb-0">
               {filteredAreas.length > 0 ? (
                 filteredAreas.map((item, index) => {
-                  const selected = isMultiSelect && isAreaSelected(item.name);
+                  const selected = isAreaSelected(item.name);
                   return (
                     <div
                       key={index}
                       className={`
-                        aspect-square bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border flex flex-col items-center justify-center gap-1 transition-all cursor-pointer group p-1 relative overflow-hidden
+                        aspect-square rounded-xl border flex flex-col items-center justify-center gap-1 transition-all cursor-pointer group p-1 relative overflow-hidden backdrop-blur-md
                         ${selected
-                          ? "border-blue-500 bg-blue-50 shadow-md shadow-blue-100 ring-2 ring-blue-400/40 scale-[1.02]"
-                          : "border-slate-200 hover:shadow-md hover:scale-105 hover:border-blue-400 hover:bg-blue-50/30"
+                          ? "bg-slate-900/90 border-white/30 text-white shadow-xl shadow-blue-900/80 scale-[1.08]"
+                          : "bg-white/40 border-white/60 shadow-lg shadow-blue-900/50 hover:shadow-2xl hover:shadow-blue-900/70 hover:scale-105 hover:border-white/80 hover:bg-white/50"
                         }
                       `}
                       onMouseEnter={() => preloadModel(item.model)}
                       onClick={(e) => handleAreaClick(item, e)}
                     >
-                      {/* Selection indicator */}
-                      {isMultiSelect ? (
-                        <div className={`absolute top-2 right-2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
-                          ${selected
-                            ? "bg-blue-600 border-blue-600"
-                            : "bg-white border-slate-300 group-hover:border-blue-400"
-                          }`}
-                        >
-                          {selected && (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-slate-200 group-hover:bg-blue-400 transition-colors" />
-                      )}
-
-                      <span className={`font-bold text-xs md:text-sm text-center uppercase break-words px-1 tracking-tight leading-tight
-                        ${selected ? "text-blue-700" : "text-slate-700 group-hover:text-slate-900"}
-                      `}>
+                      <span 
+                        className={`font-bold text-center uppercase break-words px-1 leading-tight
+                        ${selected ? "text-white" : "text-slate-800 group-hover:text-slate-900"}
+                      `}
+                        style={{fontSize: '12px'}}
+                      >
                         {item.name}
                       </span>
                     </div>
@@ -275,23 +211,25 @@ export default function BodyAreaSelection({
               )}
             </div>
           </div>
+
+          {/* Next Step Button */}
+          <div className="px-2 md:px-4 pb-4">
+            <button
+              onClick={handleNext}
+              disabled={selectedAreas.length === 0}
+              className={`
+                w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2
+                ${selectedAreas.length > 0
+                  ? "bg-slate-900 text-white hover:bg-black active:scale-[0.99] shadow-lg shadow-slate-500"
+                  : "bg-slate-100 text-slate-300 cursor-not-allowed"
+                }
+              `}
+            >
+              Next Step
+            </button>
+          </div>
         </div>
       </div>
-
-      {/* Floating Continue Button for Multi-Select */}
-      {isMultiSelect && selectedAreas.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-[fadeIn_0.2s_ease-in-out]">
-          <button
-            onClick={handleContinueMulti}
-            className="px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold text-base shadow-2xl shadow-slate-400/40 hover:bg-black hover:scale-105 active:scale-[0.98] transition-all flex items-center gap-2"
-          >
-            Continue
-            <span className="bg-white/20 text-white text-sm px-2.5 py-0.5 rounded-full font-semibold">
-              {selectedAreas.length} selected
-            </span>
-          </button>
-        </div>
-      )}
     </div>
   );
 }

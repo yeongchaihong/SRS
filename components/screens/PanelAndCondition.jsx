@@ -20,14 +20,10 @@ export default function PanelAndCondition({
   // STATE LOCK: Tracks if mouse is over the UI
   const [isHoveringUI, setIsHoveringUI] = useState(false);
 
-  // Display label for body area(s)
-  const areaLabel = activeBodyAreas.length > 1
-    ? activeBodyAreas.map(a => (typeof a === 'string' ? a : a.name)).join(", ")
-    : activeBodyArea;
-
   return (
     <div className="flex flex-col lg:flex-row w-full h-screen relative overflow-hidden bg-white md:pt-0">
-
+      {/* Mobile background */}
+      <div className="absolute inset-0 z-0 lg:hidden" style={{background: "radial-gradient(125% 125% at 50% 90%, #fff 40%, #4180de 100%)"}}/>
 
       {/* --- LEFT COLUMN: 3D MODEL --- */}
       <div
@@ -59,13 +55,13 @@ export default function PanelAndCondition({
 
       {/* --- RIGHT COLUMN: INTERACTION PANEL --- */}
       <div
-        className="w-full lg:w-[450px] shrink-0 h-full bg-white  border-slate-200 shadow-sm z-50 flex flex-col pt-8 md:pt-0"
+        className="w-full lg:w-[450px] shrink-0 h-full lg:bg-blue-200 border-slate-200 shadow-sm z-50 flex flex-col pt-8 md:pt-0"
         onMouseEnter={() => setIsHoveringUI(true)}
         onMouseLeave={() => setIsHoveringUI(false)}
       >
 
         {/* HEADER */}
-        <div className="p-6 md:p-8 shrink-0 bg-white z-10 border-b border-slate-100 pt-16 lg:pt-8">
+        <div className="p-6 md:p-8 shrink-0 z-10 pt-16 lg:pt-8">
           {/* Added pt-16 on mobile to prevent Back Button from overlapping text */}
           <div className="flex flex-row items mb-1">
             <button
@@ -74,9 +70,22 @@ export default function PanelAndCondition({
             >
               &lt;
             </button>
-            <h2 className={`font-extrabold uppercase text-slate-900 leading-tight ${activeBodyAreas.length > 1 ? 'text-xl' : 'text-3xl'}`}>
-              {areaLabel}
-            </h2>
+            {activeBodyAreas.length > 1 ? (
+              <div className="flex flex-col gap-1">
+                {activeBodyAreas.map((a, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-black flex-shrink-0"></div>
+                    <h2 className="font-extrabold uppercase text-slate-900 leading-tight text-2xl">
+                      {typeof a === 'string' ? a : a.name}
+                    </h2>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <h2 className="font-extrabold uppercase text-slate-900 leading-tight text-3xl">
+                {activeBodyArea}
+              </h2>
+            )}
           </div>
           <p className="text-slate-500 text-sm">
             Select the specific panel and condition observed.
@@ -87,8 +96,8 @@ export default function PanelAndCondition({
         <div className="flex-1 min-h-0 flex flex-col">
 
           {/* TOP HALF: PANEL LIST */}
-          <div className="flex-1 min-h-0 flex flex-col p-6 md:px-8 md:pt-6 md:pb-2">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2 pl-1">
+          <div className="flex-1 min-h-0 flex flex-col p-6 md:px-8 md:pt-1 md:pb-2">
+            <label className="text-sm font-bold text-slate-900 uppercase tracking-widest block mb-2 pl-1">
               Panel
             </label>
             <div className="flex-1 border border-slate-200 rounded-xl overflow-hidden shadow-sm relative flex flex-col">
@@ -111,11 +120,11 @@ export default function PanelAndCondition({
 
           {/* BOTTOM HALF: CONDITION LIST */}
           {selectedPanel && (
-            <div className="flex-1 min-h-0 flex flex-col p-6 md:px-8 md:pt-2 md:pb-6 border-t border-slate-50 bg-slate-50/30">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2 pl-1">
+            <div className="flex-1 min-h-0 flex flex-col p-6 md:px-8 md:pt-2 md:pb-6">
+              <label className="text-sm font-bold text-slate-900 uppercase tracking-widest block mb-2 pl-1">
                 Condition
               </label>
-              <div className="flex-1 border border-slate-200 rounded-xl overflow-hidden shadow-sm relative flex flex-col bg-white">
+              <div className="flex-1 border border-slate-200 rounded-xl overflow-hidden shadow-sm relative flex flex-col">
                 <div className="flex-1 overflow-y-auto custom-scrollbar">
                   <TypingSelection
                     key={`condition-${selectedPanel}`}
@@ -136,14 +145,14 @@ export default function PanelAndCondition({
         </div>
 
         {/* FOOTER */}
-        <div className="p-6 md:p-8 pt-4 border-t border-slate-100 bg-white shrink-0 z-20">
+        <div className="p-6 md:p-8 pt-4 shrink-0 z-20">
           <button
             onClick={onNext}
             disabled={!selectedCondition}
             className={`
               w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2
               ${selectedCondition
-                ? "bg-slate-900 text-white hover:bg-black active:scale-[0.99] shadow-lg shadow-slate-200"
+                ? "bg-slate-800 text-white hover:bg-black active:scale-[0.99] shadow-lg shadow-slate-500"
                 : "bg-slate-100 text-slate-300 cursor-not-allowed"
               }
             `}
