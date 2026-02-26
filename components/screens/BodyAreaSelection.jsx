@@ -133,11 +133,7 @@ export default function BodyAreaSelection({
   // 6. Handle area click (always multi-select)
   const handleAreaClick = (item, e) => {
     e.stopPropagation();
-    if (isMultiSelect) {
-      toggleAreaSelection(item);
-    } else {
-      onBodyAreaSelect(item.name, item.model);
-    }
+    toggleAreaSelection(item);
   };
 
   // 7. Check if area is selected
