@@ -1,24 +1,62 @@
 import { useMemo, useState } from "react";
 import { preloadModel } from "../../utils/preload";
+import { BODY_AREAS } from "../../constants/bodyAreas";
 
-// UPDATED MAPPING based on your file structure
-const ASSET_MAP = {
-  head: { model: "/3d-model/head_study.glb" },
-  neck: { model: "/3d-model/neck.glb" },
-  chest: { model: "/3d-model/chest.glb" },
-  breast: { model: "/3d-model/human_female_breast_anatomy.glb" },
-  abdomen: { model: "/3d-model/abdomen_anatomy.glb" },
-  pelvis: { model: "/3d-model/VH_F_Pelvis.glb" },
-  spine: { model: "/3d-model/the_human_spinal_column.glb" },
-  cardiac: { model: "/3d-model/stylizedhumanheart.glb" },
+const DEFAULT_MODEL =
+  BODY_AREAS.find((area) => area.action === "extremities")?.model ||
+  "/3d-model/arms_hands_head_legs_and_feet__low_poly_female.glb";
 
-  // Using the full body model for extremities since separate files aren't shown
-  "upper extremity": { model: "/3d-model/arms_hands_head_legs_and_feet_low_poly_female.glb" },
-  "lower extremity": { model: "/3d-model/arms_hands_head_legs_and_feet_low_poly_female.glb" },
-  wholebody: { model: "/3d-model/arms_hands_head_legs_and_feet_low_poly_female.glb" },
+const ASSET_MAP = BODY_AREAS.reduce((map, area) => {
+  if (!area?.action || !area?.model) return map;
+  map[area.action.toLowerCase()] = { model: area.model };
+  return map;
+}, {});
 
-  // Fallback
-  default: { model: "/3d-model/arms_hands_head_legs_and_feet_low_poly_female.glb" },
+const AREA_META_MAP = BODY_AREAS.reduce((map, area) => {
+  if (!area?.action) return map;
+  map[area.action.toLowerCase()] = area;
+  return map;
+}, {});
+
+const getAreaAssets = (lowerKey) => {
+  const direct = ASSET_MAP[lowerKey];
+  if (direct) {
+    return {
+      model: direct.model,
+      linkedAreas: [],
+    };
+  }
+
+  if (lowerKey.includes("-")) {
+    const parts = lowerKey
+      .split("-")
+      .map((part) => part.trim())
+      .filter(Boolean);
+
+    const linkedAreas = parts
+      .map((part) => {
+        const meta = AREA_META_MAP[part];
+        const model = ASSET_MAP[part]?.model;
+        if (!model) return null;
+        return {
+          name: meta?.name || part,
+          model,
+        };
+      })
+      .filter(Boolean);
+
+    if (linkedAreas.length > 0) {
+      return {
+        model: linkedAreas[0].model,
+        linkedAreas,
+      };
+    }
+  }
+
+  return {
+    model: DEFAULT_MODEL,
+    linkedAreas: [],
+  };
 };
 
 export default function BodyAreaSelection({
@@ -52,12 +90,13 @@ export default function BodyAreaSelection({
       if (!uniqueSet.has(lowerKey)) {
         uniqueSet.add(lowerKey);
 
-        // Lookup specific model, otherwise use default
-        const assets = ASSET_MAP[lowerKey] || ASSET_MAP.default;
+        // Lookup specific/composite model assets from BODY_AREAS
+        const assets = getAreaAssets(lowerKey);
 
         areas.push({
           name: normalized,
           model: assets.model,
+          linkedAreas: assets.linkedAreas,
         });
       }
     });
@@ -94,7 +133,11 @@ export default function BodyAreaSelection({
   // 6. Handle area click (always multi-select)
   const handleAreaClick = (item, e) => {
     e.stopPropagation();
-    toggleAreaSelection(item);
+    if (isMultiSelect) {
+      toggleAreaSelection(item);
+    } else {
+      onBodyAreaSelect(item.name, item.model);
+    }
   };
 
   // 7. Check if area is selected

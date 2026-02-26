@@ -1,41 +1,162 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# SRS
 
-## Getting Started
+Clinical scenario referral assistant built with Next.js, React, and MongoDB.
 
-First, run the development server:
+## Quick Start
+
+1. Create `.env.local`:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Run the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open `http://localhost:3000`
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+---
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## High-Level Architecture
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+The app has two runtime sides:
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Frontend (React/Next page + components)**
+2. **Backend API route (Next API) + MongoDB via Mongoose**
 
-## Learn More
+### Runtime connection path
 
-To learn more about Next.js, take a look at the following resources:
+`pages/index.js`
+→ renders `components/ChatbotUI.jsx`
+→ `ChatbotUI` calls `fetch('/api/conditions')`
+→ `pages/api/conditions.js`
+→ `lib/mongodb.js` (`connectDB()`)
+→ `models/Condition.js`
+→ MongoDB collection
+→ API JSON response
+→ `ChatbotUI` state (`masterData`)
+→ filtered client-side into panels/conditions/scenarios/results
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## File-to-File Flow (Who connects to who)
 
-## Deploy on Vercel
+### 1) App Entry and Global Wrapper
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `pages/_app.js`
+	- Loads global styles (`styles/globals.css`)
+	- Wraps pages with `AnimatePresence`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
-"# SRS" 
+- `pages/index.js`
+	- Entry page for `/`
+	- Renders only `ChatbotUI`
+
+### 2) Main Orchestrator
+
+- `components/ChatbotUI.jsx`
+	- Central state machine for the full user journey
+	- Imports and switches between screen components:
+		- `WelcomeScreen`
+		- `PatientSelection`
+		- `BodyAreaSelection`
+		- `PanelAndCondition`
+		- `ScenarioSelection`
+		- `ResultsView`
+		- `Sidebar`
+	- **Backend connection happens here**:
+		- `useEffect` on mount → `fetch('/api/conditions')`
+		- Stores returned records in `masterData`
+
+### 3) Backend API and Database Layer
+
+- `pages/api/conditions.js`
+	- Handles `GET /api/conditions`
+	- Optional query params: `age`, `bodyArea`, `panel`
+	- Builds Mongo query and returns data via `Condition.find(...).lean()`
+
+- `lib/mongodb.js`
+	- Reads `MONGODB_URI` from environment
+	- Creates/reuses cached Mongoose connection
+
+- `models/Condition.js`
+	- Mongoose schema/model for condition documents
+	- Targets collection: `completed_original_clinical`
+
+---
+
+## End-to-End User Flow (Step by step)
+
+1. User opens app (`/`) → `pages/index.js` → `ChatbotUI`
+2. `ChatbotUI` fetches all condition rows from `/api/conditions`
+3. User clicks **Start** in `WelcomeScreen`
+4. User selects patient type in `PatientSelection`
+5. User selects body area in `BodyAreaSelection`
+6. `ChatbotUI` derives unique panel list for that body area
+7. User selects panel + condition in `PanelAndCondition`
+8. User clicks **Next**
+9. `ChatbotUI` builds scenario list client-side and shows `ScenarioSelection`
+10. User clicks a scenario row (`onScenarioSelect(item)`)
+11. `ChatbotUI` processes `procedures` from selected scenario and shows `ResultsView`
+12. History/Favorites are persisted to browser `localStorage` and displayed through `Sidebar`
+
+---
+
+## Screen Component Responsibilities
+
+- `components/screens/WelcomeScreen.jsx`
+	- Landing view and start trigger
+
+- `components/screens/PatientSelection.jsx`
+	- Adult/Pediatric selection
+
+- `components/screens/BodyAreaSelection.jsx`
+	- Builds unique body area list from fetched data
+	- Uses `utils/preload.js` to preload `.glb` 3D assets
+
+- `components/screens/PanelAndCondition.jsx`
+	- Panel and condition selection UI
+
+- `components/screens/ScenarioSelection.jsx`
+	- Displays scenario rows
+	- On row click, calls callback from `ChatbotUI`
+
+- `components/screens/ResultsView.jsx`
+	- Shows recommended procedures and appropriateness bands
+
+- `components/ui/Sidebar.jsx`
+	- Reads history/favorites from `localStorage`
+	- Can restore previous selection flow
+
+---
+
+## Important Clarification: Scripts vs Runtime
+
+Files under `scripts/` (for example `scripts/inspect_schema.js`) are **standalone Node scripts** used for inspection/debugging.
+
+- They connect directly to MongoDB when run manually.
+- They are **not** called automatically by the frontend.
+- They are **not** part of the `/api/conditions` request path.
+
+Run a script manually like:
+
+```bash
+node scripts/inspect_schema.js
+```
+
+---
+
+## Development Commands
+
+- `npm run dev` — start development server
+- `npm run build` — production build
+- `npm run start` — run production server
+- `npm run lint` — run ESLint
