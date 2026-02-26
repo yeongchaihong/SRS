@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import PatientSelection from "./screens/PatientSelection";
@@ -21,6 +21,7 @@ const ChatbotUI = () => {
 
   // --- 3D Model State ---
   const [selectedModelSrc, setSelectedModelSrc] = useState(null);
+  const [multiModelIndex, setMultiModelIndex] = useState(0);
   const [modelCentered, setModelCentered] = useState(true);
   const [hasMoved, setHasMoved] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
@@ -90,6 +91,48 @@ const ChatbotUI = () => {
     ? activeBodyAreas.map(a => (typeof a === 'string' ? a : a.name).toLowerCase())
     : activeBodyArea ? [activeBodyArea.toLowerCase()] : [];
 
+  const multiModelSequence = useMemo(() => {
+    const seen = new Set();
+    return activeBodyAreas
+      .flatMap((area) => {
+        if (typeof area === "string") return [];
+        if (Array.isArray(area?.linkedAreas) && area.linkedAreas.length > 0) {
+          return area.linkedAreas
+            .map((linked) => {
+              if (!linked?.model) return null;
+              return {
+                name: linked?.name || "Model",
+                model: linked.model,
+              };
+            })
+            .filter(Boolean);
+        }
+        if (!area?.model) return [];
+        return [{ name: area?.name || "Model", model: area.model }];
+      })
+      .filter((entry) => {
+        if (!entry || seen.has(entry.model)) return false;
+        seen.add(entry.model);
+        return true;
+      });
+  }, [activeBodyAreas]);
+
+  const multiModelSources = useMemo(
+    () => multiModelSequence.map((entry) => entry.model),
+    [multiModelSequence]
+  );
+
+  const currentModelLabel =
+    multiModelSequence[multiModelIndex]?.name || null;
+
+  const setMultiModelByIndex = useCallback((index) => {
+    if (multiModelSources.length === 0) return;
+    const total = multiModelSources.length;
+    const normalizedIndex = ((index % total) + total) % total;
+    setMultiModelIndex(normalizedIndex);
+    setSelectedModelSrc(multiModelSources[normalizedIndex]);
+  }, [multiModelSources]);
+
   useEffect(() => {
     if (effectiveBodyAreas.length > 0 && ageFilteredData.length > 0) {
       const relevantRows = ageFilteredData.filter(item => {
@@ -147,6 +190,33 @@ const ChatbotUI = () => {
     }
   }, [showPanelAndCondition]);
 
+  useEffect(() => {
+    if (multiModelSources.length === 0) {
+      setMultiModelIndex(0);
+      return;
+    }
+
+    if (multiModelSources.length === 1) {
+      setMultiModelIndex(0);
+      setSelectedModelSrc(multiModelSources[0]);
+      return;
+    }
+
+    if (multiModelIndex >= multiModelSources.length) {
+      setMultiModelByIndex(0);
+    }
+  }, [multiModelSources, multiModelIndex, setMultiModelByIndex]);
+
+  useEffect(() => {
+    if (!showPanelAndCondition || multiModelSources.length <= 1) return;
+
+    const rotationTimer = setTimeout(() => {
+      setMultiModelByIndex(multiModelIndex + 1);
+    }, 10000);
+
+    return () => clearTimeout(rotationTimer);
+  }, [showPanelAndCondition, multiModelSources, multiModelIndex, setMultiModelByIndex]);
+
   // Check Favorites Status
   useEffect(() => {
     if (selectedScenario) {
@@ -172,24 +242,35 @@ const ChatbotUI = () => {
     setSelectedCondition(null);
   };
 
-  const handleBodyAreaSelect = (bodyArea, modelSrc) => {
+  const handleBodyAreaSelect = (bodyArea, modelSrc, linkedAreas = []) => {
     setSelectedModelSrc(modelSrc);
+    setMultiModelIndex(0);
     setActiveBodyArea(bodyArea);
-    setActiveBodyAreas([]);
+    setActiveBodyAreas(linkedAreas.length > 1 ? linkedAreas : []);
     setShowPanelAndCondition(true);
   };
 
   const handleMultiBodyAreaSelect = (areas) => {
     // areas is an array of { name, model } objects
     setActiveBodyAreas(areas);
+    setMultiModelIndex(0);
     setActiveBodyArea(areas[0]?.name || null);
     setSelectedModelSrc(areas[0]?.model || null);
     setShowPanelAndCondition(true);
   };
 
+  const handlePrevModel = () => {
+    setMultiModelByIndex(multiModelIndex - 1);
+  };
+
+  const handleNextModel = () => {
+    setMultiModelByIndex(multiModelIndex + 1);
+  };
+
   const handleBack3D = (e) => {
     e.stopPropagation();
     setShowPanelAndCondition(false);
+    setMultiModelIndex(0);
     setActiveBodyArea(null);
     setActiveBodyAreas([]);
     setSelectedPanel(null);
@@ -327,6 +408,7 @@ const ChatbotUI = () => {
     setSelectedPatient(null);
     setShowBodyArea(false);
     setShowPanelAndCondition(false);
+    setMultiModelIndex(0);
     setActiveBodyArea(null);
     setActiveBodyAreas([]);
     setPanels([]);
@@ -486,6 +568,9 @@ const ChatbotUI = () => {
                   selectedModelSrc={selectedModelSrc}
                   modelCentered={modelCentered}
                   hasMoved={hasMoved}
+                  currentModelIndex={multiModelIndex}
+                  totalModels={multiModelSources.length}
+                  currentModelLabel={currentModelLabel}
                   panels={panels}
                   conditions={conditions}
                   activeBodyArea={activeBodyArea}
@@ -495,6 +580,8 @@ const ChatbotUI = () => {
                   onBack={handleBack3D}
                   onClose={handleClose3D}
                   onUserInteract={handleUserInteract}
+                  onPrevModel={handlePrevModel}
+                  onNextModel={handleNextModel}
                   onPanelSelect={handlePanelSelect}
                   onConditionSelect={handleConditionSelect}
                   onNext={handleNext}

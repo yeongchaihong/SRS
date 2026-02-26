@@ -12,6 +12,53 @@ const ASSET_MAP = BODY_AREAS.reduce((map, area) => {
   return map;
 }, {});
 
+const AREA_META_MAP = BODY_AREAS.reduce((map, area) => {
+  if (!area?.action) return map;
+  map[area.action.toLowerCase()] = area;
+  return map;
+}, {});
+
+const getAreaAssets = (lowerKey) => {
+  const direct = ASSET_MAP[lowerKey];
+  if (direct) {
+    return {
+      model: direct.model,
+      linkedAreas: [],
+    };
+  }
+
+  if (lowerKey.includes("-")) {
+    const parts = lowerKey
+      .split("-")
+      .map((part) => part.trim())
+      .filter(Boolean);
+
+    const linkedAreas = parts
+      .map((part) => {
+        const meta = AREA_META_MAP[part];
+        const model = ASSET_MAP[part]?.model;
+        if (!model) return null;
+        return {
+          name: meta?.name || part,
+          model,
+        };
+      })
+      .filter(Boolean);
+
+    if (linkedAreas.length > 0) {
+      return {
+        model: linkedAreas[0].model,
+        linkedAreas,
+      };
+    }
+  }
+
+  return {
+    model: DEFAULT_MODEL,
+    linkedAreas: [],
+  };
+};
+
 export default function BodyAreaSelection({
   selectedPatient,
   masterData,
@@ -44,12 +91,13 @@ export default function BodyAreaSelection({
       if (!uniqueSet.has(lowerKey)) {
         uniqueSet.add(lowerKey);
 
-        // Lookup specific model from BODY_AREAS, otherwise use default
-        const assets = ASSET_MAP[lowerKey] || { model: DEFAULT_MODEL };
+        // Lookup specific/composite model assets from BODY_AREAS
+        const assets = getAreaAssets(lowerKey);
 
         areas.push({
           name: normalized,
           model: assets.model,
+          linkedAreas: assets.linkedAreas,
         });
       }
     });
@@ -100,7 +148,7 @@ export default function BodyAreaSelection({
     if (isMultiSelect) {
       toggleAreaSelection(item);
     } else {
-      onBodyAreaSelect(item.name, item.model);
+      onBodyAreaSelect(item.name, item.model, item.linkedAreas || []);
     }
   };
 

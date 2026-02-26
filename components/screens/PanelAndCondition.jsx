@@ -5,6 +5,9 @@ import TypingSelection from "../ui/typing-selection";
 export default function PanelAndCondition({
   selectedModelSrc,
   hasMoved,
+  currentModelIndex = 0,
+  totalModels = 0,
+  currentModelLabel = null,
   panels,
   conditions,
   activeBodyArea,
@@ -13,6 +16,8 @@ export default function PanelAndCondition({
   selectedCondition,
   onBack,
   onUserInteract,
+  onPrevModel,
+  onNextModel,
   onPanelSelect,
   onConditionSelect,
   onNext,
@@ -49,6 +54,39 @@ export default function PanelAndCondition({
             </div>
           )}
         </div>
+
+        {totalModels > 1 && (
+          <>
+            <div className="absolute inset-y-0 left-0 flex items-center pl-4">
+              <button
+                onClick={onPrevModel}
+                className="w-10 h-10 rounded-full bg-white/90 border border-slate-200 shadow-sm hover:bg-white hover:scale-105 active:scale-95 transition-all flex items-center justify-center text-slate-700"
+                aria-label="Previous model"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="absolute inset-y-0 right-0 flex items-center pr-4">
+              <button
+                onClick={onNextModel}
+                className="w-10 h-10 rounded-full bg-white/90 border border-slate-200 shadow-sm hover:bg-white hover:scale-105 active:scale-95 transition-all flex items-center justify-center text-slate-700"
+                aria-label="Next model"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-white/90 border border-slate-200 text-xs font-semibold text-slate-600 shadow-sm">
+              {currentModelIndex + 1} / {totalModels}
+              {currentModelLabel ? ` • ${currentModelLabel}` : ""}
+            </div>
+          </>
+        )}
 
         {!hasMoved && (
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-none text-sm text-slate-400 font-medium">
