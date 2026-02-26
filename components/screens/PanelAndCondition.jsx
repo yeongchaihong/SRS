@@ -8,6 +8,7 @@ export default function PanelAndCondition({
   panels,
   conditions,
   activeBodyArea,
+  activeBodyAreas = [],
   selectedPanel,
   selectedCondition,
   onBack,
@@ -19,12 +20,17 @@ export default function PanelAndCondition({
   // STATE LOCK: Tracks if mouse is over the UI
   const [isHoveringUI, setIsHoveringUI] = useState(false);
 
+  // Display label for body area(s)
+  const areaLabel = activeBodyAreas.length > 1
+    ? activeBodyAreas.map(a => (typeof a === 'string' ? a : a.name)).join(", ")
+    : activeBodyArea;
+
   return (
     <div className="flex flex-col lg:flex-row w-full h-screen relative overflow-hidden bg-white md:pt-0">
-    
+
 
       {/* --- LEFT COLUMN: 3D MODEL --- */}
-      <div 
+      <div
         className={`flex-1 h-full relative bg-slate-100/50 flex items-center justify-center overflow-hidden z-0 transition-opacity duration-200 
         ${isHoveringUI ? "pointer-events-none opacity-90" : "pointer-events-auto"}`}
       >
@@ -43,7 +49,7 @@ export default function PanelAndCondition({
             </div>
           )}
         </div>
-        
+
         {!hasMoved && (
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-none text-sm text-slate-400 font-medium">
             (Rotate model to inspect)
@@ -52,26 +58,26 @@ export default function PanelAndCondition({
       </div>
 
       {/* --- RIGHT COLUMN: INTERACTION PANEL --- */}
-      <div 
+      <div
         className="w-full lg:w-[450px] shrink-0 h-full bg-white  border-slate-200 shadow-sm z-50 flex flex-col pt-8 md:pt-0"
         onMouseEnter={() => setIsHoveringUI(true)}
         onMouseLeave={() => setIsHoveringUI(false)}
       >
-        
+
         {/* HEADER */}
-        <div className="p-6 md:p-8 shrink-0 bg-white z-10 border-b border-slate-100 pt-16 lg:pt-8"> 
-        {/* Added pt-16 on mobile to prevent Back Button from overlapping text */}
-        <div className="flex flex-row items mb-1">
-          <button
-            onClick={onBack}
-            className="text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-20 pr-2 md:hidden"
-          >
-            &lt;
-          </button>
-          <h2 className="font-extrabold text-3xl uppercase text-slate-900 leading-tight">
-            {activeBodyArea}
-          </h2>
-        </div>
+        <div className="p-6 md:p-8 shrink-0 bg-white z-10 border-b border-slate-100 pt-16 lg:pt-8">
+          {/* Added pt-16 on mobile to prevent Back Button from overlapping text */}
+          <div className="flex flex-row items mb-1">
+            <button
+              onClick={onBack}
+              className="text-black text-xl font-semibold hover:scale-105 transition-transform flex items-center gap-2 z-20 pr-2 md:hidden"
+            >
+              &lt;
+            </button>
+            <h2 className={`font-extrabold uppercase text-slate-900 leading-tight ${activeBodyAreas.length > 1 ? 'text-xl' : 'text-3xl'}`}>
+              {areaLabel}
+            </h2>
+          </div>
           <p className="text-slate-500 text-sm">
             Select the specific panel and condition observed.
           </p>
@@ -89,7 +95,7 @@ export default function PanelAndCondition({
               <div className="flex-1 overflow-y-auto custom-scrollbar">
                 <TypingSelection
                   key={`panel-${activeBodyArea}`}
-                  listMaxHeight="h-auto" 
+                  listMaxHeight="h-auto"
                   className="w-full border-none shadow-none"
                   text="Select Panel..."
                   options={panels.map((p) => ({ label: p.panel }))}
@@ -136,10 +142,9 @@ export default function PanelAndCondition({
             disabled={!selectedCondition}
             className={`
               w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2
-              ${
-                selectedCondition
-                  ? "bg-slate-900 text-white hover:bg-black active:scale-[0.99] shadow-lg shadow-slate-200"
-                  : "bg-slate-100 text-slate-300 cursor-not-allowed"
+              ${selectedCondition
+                ? "bg-slate-900 text-white hover:bg-black active:scale-[0.99] shadow-lg shadow-slate-200"
+                : "bg-slate-100 text-slate-300 cursor-not-allowed"
               }
             `}
           >
