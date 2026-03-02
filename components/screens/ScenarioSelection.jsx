@@ -30,7 +30,7 @@ export default function ScenarioSelection({
       <div className="w-full lg:w-[65%] h-full lg:bg-white flex flex-col z-10 shadow-sm">
         
         {/* Header */}
-        <div className="pt-15 px-6 md:px-10 pb-6 shrink-0 lg:border-b lg:border-slate-100 lg:bg-blue-200 z-20">
+        <div className="md:pt-15 px-6 md:px-10 pb-6 shrink-0 lg:border-b lg:border-slate-100 lg:bg-blue-200 z-2 pt-24">
           <div className="flex flex-row items mb-2">
             <button
             onClick={onBack}
