@@ -1,0 +1,430 @@
+[
+  {
+    "_id": {
+      "$oid": "692cb38d4ba1902baa72caa0"
+    },
+    "panel": "Breast",
+    "scenario_id": "3185415",
+    "condition": "Breast cancer screening",
+    "scenario_description": "Breast cancer screening, cancer hx, mastectomy side, no reconstruction",
+    "scenario_url": "https://gravitas.acr.org/ACPortal/GetDataForOneScenario?senarioId=5366",
+    "sex": "Female Only",
+    "age": "18 - 150",
+    "body_area": "Breast",
+    "priority_clinical_areas": "",
+    "variant": {
+      "id": "variant1778",
+      "description": "Female. Breast cancer screening. History of cancer, mastectomy side(s), no reconstruction."
+    },
+    "procedures": [
+      {
+        "procedure_name": "US breast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is insufficient evidence to support the use of ultrasound (US) for screening in this setting. There is a paucity of evidence-based literature [16,18-20], with only a few small retrospective studies finding utility in screening with US in this setting. A subset of a retrospective study evaluated 67 women postmastectomy who had suspected recurrence and underwent US imaging; although some of these women were symptomatic, 7 recurrent impalpable cancers were detected only on US in the cohort [16]. This study also found 3/61 cancers detected only on mammography and not on US. A study of 1,796 US examinations in 874 asymptomatic patients (median follow-up of 37 months) found 15 clinically occult recurrences detected with US in 15 patients (cancer detection rate of 1.7% per patient and 0.8% per examination) [19]. Lee et al [20] evaluated 1,180 consecutive screening USs of the mastectomy site and the ipsilateral axillary fossa in 468 asymptomatic women and found 10 malignancies with a similar cancer detection rate of 2.1% per patient and 0.8% per screening examination."
+      },
+      {
+        "procedure_name": "Digital breast tomosynthesis screening",
+        "color_indicator": "pink",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of digital breast tomosynthesis (DBT) for screening the postmastectomy side. However, annual screening with 2-D mammography or DBT is recommended for the contralateral native breast. DBT addresses some of the limitations encountered with standard 2-D mammographic views. In addition to planar images, DBT allows for creation and viewing of thin-section reconstructed images that may decrease the lesion-masking effect of overlapping normal tissue and reveal the true nature of potential false-positive findings. See the ACR Appropriateness Criteria ® topic on \" Breast Cancer Screening ” [15] for further guidance."
+      },
+      {
+        "procedure_name": "Mammography screening",
+        "color_indicator": "pink",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "Annual screening with 2-D mammography or DBT is recommended for the contralateral native breast. There is insufficient evidence to support screening with 2-D mammography of the postmastectomy side. Although one small retrospective study has shown a small increase in cancer detection with mammography in postmastectomy patients [16], another study has demonstrated no benefit [8]."
+      },
+      {
+        "procedure_name": "MRI breast without and with IV contrast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of MRI without and with IV contrast, specifically for screening the postmastectomy nonreconstructed breast. However, based on breast cancer risk, including factors such as age at cancer diagnosis, breast density, and family history, women with a personal history of cancer may undergo MRI for the contralateral native breast [17]. In this setting, the postmastectomy breast may be imaged and evaluated on MRI with potential for malignancy detection and characterization [18]."
+      },
+      {
+        "procedure_name": "MRI breast without IV contrast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of MRI breast without intravenous (IV) contrast for screening in this clinical setting."
+      },
+      {
+        "procedure_name": "FDG-PET breast dedicated",
+        "color_indicator": "pink",
+        "adult_rrl": "1-10 mSv☢☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of fluorine-18-2-fluoro-2-deoxy-D-glucose (FDG)-PET breast for screening in this clinical setting."
+      },
+      {
+        "procedure_name": "Sestamibi MBI",
+        "color_indicator": "pink",
+        "adult_rrl": "1-10 mSv☢☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of Tc-99m sestamibi molecular breast imaging (MBI) for screening in this clinical setting."
+      }
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "692cb38d4ba1902baa72caa2"
+    },
+    "panel": "Breast",
+    "scenario_id": "3199210",
+    "condition": "Breast cancer screening",
+    "scenario_description": "Breast cancer screening, chest radiation therapy hx",
+    "scenario_url": "https://gravitas.acr.org/ACPortal/GetDataForOneScenario?senarioId=8346",
+    "sex": "Male Only",
+    "age": "18 - 24",
+    "body_area": "Breast",
+    "priority_clinical_areas": "",
+    "variant": {
+      "id": "variant2445",
+      "description": "Adult male, younger than 25 years of age. Breast cancer screening. Any risk."
+    },
+    "procedures": [
+      {
+        "procedure_name": "US breast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support breast US screening in this clinical setting."
+      },
+      {
+        "procedure_name": "Digital breast tomosynthesis screening",
+        "color_indicator": "pink",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support DBT screening in this clinical setting."
+      },
+      {
+        "procedure_name": "Mammography screening",
+        "color_indicator": "pink",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support mammographic screening in this clinical setting."
+      },
+      {
+        "procedure_name": "Mammography with IV contrast",
+        "color_indicator": "pink",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support screening mammography with IV contrast in this clinical setting."
+      },
+      {
+        "procedure_name": "MRI breast without and with IV contrast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support screening breast MRI without and with IV contrast in this clinical setting."
+      },
+      {
+        "procedure_name": "MRI breast without and with IV contrast abbreviated",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support screening abbreviated breast MRI without and with IV contrast in this clinical setting."
+      },
+      {
+        "procedure_name": "MRI breast without IV contrast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support screening breast MRI without IV contrast in this clinical setting."
+      },
+      {
+        "procedure_name": "MRI breast without IV contrast abbreviated",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support abbreviated screening breast MRI without IV contrast in this clinical setting."
+      },
+      {
+        "procedure_name": "Sestamibi MBI",
+        "color_indicator": "pink",
+        "adult_rrl": "1-10 mSv☢☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support screening sestamibi MBI in this clinical setting."
+      }
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "692cb38d4ba1902baa72caa4"
+    },
+    "panel": "Breast",
+    "scenario_id": "3199408",
+    "condition": "Breast cancer screening",
+    "scenario_description": "Breast cancer screening, >=20-25% estimated lifetime risk",
+    "scenario_url": "https://gravitas.acr.org/ACPortal/GetDataForOneScenario?senarioId=8425",
+    "sex": "Female Only",
+    "age": "18 - 29",
+    "body_area": "Breast",
+    "priority_clinical_areas": "",
+    "variant": {
+      "id": "variant2496",
+      "description": "Adult female younger than 30 years of age. Breast cancer screening. High risk."
+    },
+    "procedures": [
+      {
+        "procedure_name": "MRI breast without and with IV contrast",
+        "color_indicator": "green",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually appropriate",
+        "more_information": "MRI has a higher CDR than mammography alone, DBT, or mammography/DBT combined with US [67-70]. In high-risk females, supplemental screening MRI combined with mammography yields a 91% to 98% sensitivity, although the reported specificity of MRI is typically lower than mammography [43,96]. The incremental CDR of MRI in elevated-risk females ranges from 8 to 29 per 1,000 females, with higher CDR (26 per 1,000) in BRCA mutation carriers [67-69,71,72]. Breast MRI detects small, node-negative invasive cancers at earlier tumor stages compared to mammography, as well as ductal carcinoma in situ [74,75]. Screening MRI also reduces interval cancers [75]. However, breast MRI has a higher recall rate than mammography (15.1% versus 6.4%) [76], higher frequency of BI-RADS category 3 assessment than mammography (14.8% versus 11.8%), and a greater frequency of image-guided biopsies than mammography (11.8 versus 2.4%) [69]. In females with a personal history of breast cancer, early detection of second breast cancers improves survival; however, mammographic sensitivity is lower, and interval cancer rates are higher, prompting investigations into supplemental screening regimens in breast cancer survivors [3,43,72]. In females previously diagnosed with breast cancer [3], a recent meta-analysis estimated a CDR of 9 to 15 per 1,000 breast MRI [73]. Due to heterogeneity in the risk of second breast cancer diagnoses, recommendations for supplemental screening MRI vary. Based upon limited modeling data, females with a personal history of breast cancer who were diagnosed before <50 years of age or females with a personal history of breast cancer and dense breast tissue may have a >20% estimated lifetime risk of a subsequent breast cancer diagnosis and may therefore be considered high risk, warranting supplemental screening breast MRI on an annual basis [3]. In a prospective observational study of females ≤50 years of age who had undergone breast conservation therapy, supplemental screening MRI increased CDR (8.2 versus 4.4 per 1,000) but had decreased specificity, compared to mammography [72]. Childhood leukemia or sarcoma survivors treated without chest radiation are also at elevated breast cancer risk; early initiation of annual mammography and breast MRI <40 years of age would avert 52.6% to 64.3% of breast cancer deaths [93,95]. Increased risk of breast cancer from other childhood cancers such as non–Hodgkin lymphoma, Wilms tumors, and neuroblastomas has been observed, likely a combination of treatment effects and patient’s underlying genetic factors [93]. Since 2007, the American Cancer Society has recommended annual breast MRI for breast cancer screening in high-risk females [4]. The ACR recommends annual breast MRI in high-risk females beginning as early as 25 years of age [3]."
+      },
+      {
+        "procedure_name": "MRI breast without and with IV contrast abbreviated",
+        "color_indicator": "green",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually appropriate",
+        "more_information": "Data are limited regarding the use of abbreviated breast MRI without and with IV contrast for screening in high-risk females. The studies that have included high-risk females <30 years of age have not stratified results on this subset of young patients. Following the publication of the American Cancer Society guidelines for supplemental screening breast MRI in 2007, high-risk females have traditionally undergone conventional full protocol breast MRI without and with IV contrast [3,4]. However, multiple studies have demonstrated similar diagnostic accuracy for abbreviated protocol MRI compared to conventional full protocol breast MRI [79-81]. In a study evaluating 3,037 abbreviated breast MRI in 1,975 high-risk females, the CDR was 29 per 1,000, the interval cancer rate was 0.66 per 1,000, and all cancers missed by abbreviated breast MRI were node negative early-stage invasive malignancies [78]."
+      },
+      {
+        "procedure_name": "US breast",
+        "color_indicator": "yellow",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "May be appropriate",
+        "more_information": "In high-risk females undergoing annual mammography plus annual supplemental screening MRI, the addition of supplemental screening with US does not identify additional cancers and is therefore not routinely performed. The studies that have included high risk females less than age 30 have had small numbers of patients less than age 30 and have not stratified data by this subset. Screening US may be useful in high-risk patients as an alternative to MRI. However, high-risk females who do not undergo supplemental screening MRI should be counseled that the CDR of US is inferior to MRI. MRI has a higher CDR than mammography, DBT, or mammography/DBT combined with US [67-70]. The ACRIN 6666 trial enrolled females with elevated breast cancer risk [67]. Compared to mammography alone, screening US detected 5.3 cancers per 1,000 in year 1 and 3.7 cancers per 1,000 in years 2 and 3 and resulted in a larger number of false-positive examinations and false-positive biopsies each year [67]. After 3 consecutive rounds of mammography plus US, the incremental CDR of MRI was 14.7 per 1,000, although false-positive examinations also increased [67]. In a prospective multicenter study of 687 high-risk females who underwent clinical breast examination, mammography, US, and MRI for screening, the combination of MRI plus mammography maximized the breast cancers detected [68]. Mammography identified 5 cancers per 1,000 compared to 6 per 1,000 for US, 7.7 per 1,000 for mammography plus US, 14.9 per 1,000 for MRI, 14.9 per 1,000 for MRI plus US, 16 per 1,000 for mammography plus MRI, and 16 per 1,000 for mammography plus US plus MRI [68]. In a prospective study of BRCA mutation carriers and high-risk females, sensitivity of mammography was 25% and 66% whereas US was 23% and 34%, respectively [82]. In the high-risk group, mammography combined with biannual US demonstrated 100% sensitivity [82]; however, MRI was not performed. In a subset analysis of BRCA mutation carriers, MRI sensitivity was 94% [82]. In another study of 529 high-risk females suspected or proven to carry a deleterious BRCA mutation, the performance of US was also inferior to MRI [98]. The sensitivity of mammography was 33%, US was 40%, mammography plus US was 49%, and MRI was 91% [98]. In females with a personal history of breast cancer, supplemental US screening results in an incremental CDR of 2.4 to 2.9 cancers per 1,000 examinations over mammography alone; however, US screening has lower specificity [13,72]."
+      },
+      {
+        "procedure_name": "Digital breast tomosynthesis screening",
+        "color_indicator": "yellow",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "May be appropriate",
+        "more_information": "DBT displays reconstructed stacked images of the breast in combination with digital mammographic views, which may be synthetic mammograms reconstructed from the acquired tomosynthesis data set or FFDM. Compared to FFDM or synthetic mammograms alone, most studies demonstrate that DBT increases CDR and decreases recall rate [17-25]; although, some studies have not reached statistical significance [26] or have found less compelling results in subsets of females, such as those with extremely dense breasts [27,28]. Dense breast tissue decreases the sensitivity of mammography [29] and is an independent risk factor for developing breast cancer [30]. Irrespective of risk category, meta-analyses have demonstrated an incremental increase in CDR of 1.6 to 3.2 per 1,000 screening DBT examinations and a 2.2% pooled decrease in recall rate compared to digital mammography [21,32,33]. Data regarding mortality reduction from screening mammography in females <30 years of age is limited and extrapolated from available data for older age groups. Within the limited studies of females at elevated risk due to personal and/or family history of breast cancer, DBT decreased recall rate without a significant increase in CDR compared to FFDM; however, small sample sizes restrict analyses [3,43]. High-risk females due to familial or genetic factors should begin annual screening mammography at age 30 or 10 years prior to the youngest family member who had breast cancer, but generally not before age 30 [3]. Approximately one-third of breast cancers may only be detected on mammography in BRCA2 mutation carriers who are <40 years of age [88]. An early modeling study showed that mammography had more risk than benefit in younger females with BRCA mutations thought to be due to dense breast tissues and weakened DNA repair [89]. In a prospective cohort study including 8,782 high-risk females, the benefit of adding mammography to MRI in mutation carriers 30 to 39 years of age was small, as the sensitivity of mammography plus MRI was comparable to MRI alone (100% versus 96.8%) in mutation carriers [90]. In females 50 to 69 years of age, combining MRI and mammography statistically significantly increased sensitivity compared with MRI alone (96.3% versus 90.9%) [90]. In a study of 2,157 females 25 to 75 years of age, >15% lifetime risk, including 599 mutation carriers, MRI sensitivity was much higher than mammography in 24 BRCA1 patients (67% versus 25%) and slightly higher in 13 BRCA2 patients (69% versus 62%) [91]. Therefore, in some mutation carriers, some referring providers use mammography or DBT beginning at 40 years of age if patients undergo annual MRI [92]. High-risk females due to thoracic or upper abdominal radiation therapy at an early age should begin screening mammography 8 years after radiation therapy but not before 25 years of age [3,93,94]. Childhood leukemia or sarcoma survivors treated without chest radiation are also at elevated breast cancer risk; early initiation of annual mammography and breast MRI <40 years of age would avert 52.6% to 64.3% of breast cancer deaths [93,95]. Increased risk of breast cancer from other childhood cancers such as non–Hodgkin lymphoma, Wilms tumors, and neuroblastomas has been observed, likely a combination of treatment effects and patient’s underlying genetic factors [93]. The ACR recommends annual MRI surveillance starting at ages 25 to 30 and annual mammography with a variable starting age between 25 and 40, depending on type of risk, for females with genetics-based increased risk, those with a calculated lifetime risk of 20% or more, and those exposed to chest radiation at a young age [3]."
+      },
+      {
+        "procedure_name": "Mammography screening",
+        "color_indicator": "yellow",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "May be appropriate",
+        "more_information": "To date, mammography is the only screening modality shown to decrease breast cancer mortality. Multiple randomized controlled trials demonstrate that invitation to screening mammography results in at least a 22% reduction in breast cancer mortality [38]. For example, after 29 years of follow-up, the Swedish Two-County trial demonstrated a 27% to 31% reduction in breast cancer mortality in 133,065 females 40 to 74 years of age invited to screening despite use of single view mammography and the 24 to 33 month interval between subsequent screenings [1]. Randomized controlled trials of screening mammography in which advanced stage breast cancers decreased by 20% or more demonstrate even greater reductions in breast cancer mortality [11]. Observational studies, including those from population-based service screening programs, also demonstrate larger reductions in breast cancer mortality (≥40%) in females who were actually screened [11,38]. In addition to mortality reduction, screening mammography decreases treatment morbidity, because screen-detected tumors are typically lower stage (eg, smaller and more likely to be node-negative), compared to breast cancers detected by palpation [2,11]. Despite these benefits, screening mammograms also have risks. The most common perceived risks include false-positive recalls and biopsies, overdiagnosis [5,7,35], and patient anxiety. Approximately 10% of screening mammograms result in a recall for additional imaging, although <2% result in a recommendation for percutaneous biopsy following additional imaging [11]. Overdiagnosis refers to breast cancers that are detected by screening that would not have otherwise become apparent during the patient’s lifetime. The reported frequency of overdiagnosis varies widely in the published literature due to important underlying differences in study methodology. Overdiagnosis estimates that do not account for breast cancer risk, trends in breast cancer incidence, or lead time bias range from 0% to 54%, whereas adjusted estimates range from 1% to 10% [39,40]. Overdiagnosis estimates increase with age at screening [39,40]. Although the risks of screening may impact uptake and adherence to screening mammography, prior research has shown that females value early detection of breast cancer over false-positives and screening-related anxiety [11]. Despite the established mortality benefit, published guidelines differ in their recommendations for screening mammography due to variations in the perceptions of the relative risks and benefits [5,41]. Annual screening mammography results in a greater reduction in mortality compared to biennial screening [10,11]. In females 40 to 84 years of age, annual screening reduces mortality by 40%, compared to a 32% reduction for biennial screening [35]. With regular screening, interval breast cancers do occur with a higher frequency in females undergoing biennial or triennial screening compared to annual screening. The sensitivity of mammography is decreased in some groups of females, including those with dense breasts [43]. Dense breast tissue decreases the sensitivity of mammography [29] and is an independent risk factor for developing breast cancer [30]. Given the limitations of mammography and to minimize interval cancers, supplemental screening modalities have been investigated in females at high risk. Because screening mammography decreases breast cancer mortality, screening mammography or screening DBT is still performed in females undergoing supplemental screening studies [3,11,38]. Rather than supplementing screening mammography with additional imaging modalities, some have suggested limiting females offered screening mammography based upon individual patient risk assessed by various risk models, breast density, or genetic information such as single-nucleotide polymorphism. However, the randomized controlled trials demonstrating mortality reduction and most large-scale observational studies enrolled females based upon age and geographic location, not individual patient risk factors. An observational study in females <50 years of age, restricting screening to females with a first-degree family history, extremely dense breast tissue, or both, would cause 66% of potentially screen-detected cancers to be missed [44]. Data regarding mortality reduction from screening mammography in females <30 years of age is limited and extrapolated from available data for older age groups. Numerous studies in high-risk females have evaluated the performance of mammography and supplemental screening modalities, such as US and MRI. Mammography consistently demonstrates lower sensitivity (25%-69%) than US or MRI, and high-risk females experience higher interval cancer rates than the general population [3,43]. The combination of mammography with MRI yields the highest sensitivity across high-risk groups of females (91%-98%) [3,43,96]. Because screening mammography decreases breast cancer mortality, screening mammography or screening DBT is still performed in females undergoing supplemental screening studies [3,11,38]. High-risk females due to familial or genetic factors should begin annual screening mammography at age 30 or 10 years prior to the youngest family member who had breast cancer, but generally not before age 30 [3]. Approximately one-third of breast cancers may only be detected on mammography in BRCA2 mutation carriers who are <40 years of age [88]. An early modeling study showed that mammography had more risk than benefit in younger females with BRCA mutations thought to be due to dense breast tissues and weakened DNA repair and vulnerability to radiation-induced breast cancers over their lifetime [89]. In a prospective cohort study including 8,782 high-risk females, the benefit of adding mammography to MRI in mutation carriers 30 to 39 years of age was small, as the sensitivity of mammography plus MRI was comparable to MRI alone (100% versus 96.8%) in mutation carriers [90]. In females 50 to 69 years of age, combining MRI and mammography statistically significantly increased sensitivity compared with MRI alone (96.3% versus 90.9%) [90]. In a study of 2,157 females 25 to 75 years of age, >15% lifetime risk, including 599 mutation carriers, MRI sensitivity was much higher than mammography in 24 BRCA1 patients (67% versus 25%) and slightly higher in 13 BRCA2 patients (69% versus 62%) [91]. Therefore, in some mutation carriers, some referring providers use mammography or DBT beginning at 40 years of age if patients undergo annual MRI [92]. High-risk females due to thoracic or upper abdominal radiation therapy at an early age should begin screening mammography 8 years after radiation therapy but not before 25 years of age [3,93,94]. Childhood leukemia or sarcoma survivors treated without chest radiation are also at elevated breast cancer risk; early initiation of annual mammography and breast MRI <40 years of age would avert 52.6% to 64.3% of breast cancer deaths [93,95]. Increased risk of breast cancer from other childhood cancers such as non–Hodgkin lymphoma, Wilms tumors, and neuroblastomas has been observed, likely a combination of treatment effects and patient’s underlying genetic factors [93]. The ACR recommends annual MRI surveillance starting at ages 25 to 30 and annual mammography with a variable starting age between 25 and 40, depending on type of risk, for females with genetics-based increased risk, those with a calculated lifetime risk of 20% or more, and those exposed to chest radiation at a young age [3]."
+      },
+      {
+        "procedure_name": "Mammography with IV contrast",
+        "color_indicator": "pink",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of mammography with IV contrast for screening females at high risk <30 year of age."
+      },
+      {
+        "procedure_name": "MRI breast without IV contrast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of MRI without IV contrast for screening females at high risk less than age 30."
+      },
+      {
+        "procedure_name": "MRI breast without IV contrast abbreviated",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of abbreviated breast MRI without IV contrast for screening females at high risk less than age 30."
+      },
+      {
+        "procedure_name": "Sestamibi MBI",
+        "color_indicator": "pink",
+        "adult_rrl": "1-10 mSv☢☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of sestamibi MBI for screening females at high risk less than age 30."
+      }
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "692cb38d4ba1902baa72caa7"
+    },
+    "panel": "Breast",
+    "scenario_id": "3199202",
+    "condition": "Breast cancer screening",
+    "scenario_description": "Breast cancer screening, average risk",
+    "scenario_url": "https://gravitas.acr.org/ACPortal/GetDataForOneScenario?senarioId=8339",
+    "sex": "Male Only",
+    "age": "25 - 150",
+    "body_area": "Breast",
+    "priority_clinical_areas": "",
+    "variant": {
+      "id": "variant2444",
+      "description": "Adult male. Breast cancer screening. Average risk."
+    },
+    "procedures": [
+      {
+        "procedure_name": "US breast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the breast US screening in this clinical setting. No standard screening regimen for breast cancer has been recommended in the average-risk man [21]."
+      },
+      {
+        "procedure_name": "Digital breast tomosynthesis screening",
+        "color_indicator": "pink",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the DBT screening in this clinical setting. No standard screening regimen for breast cancer has been recommended in the average-risk man [21]."
+      },
+      {
+        "procedure_name": "Mammography screening",
+        "color_indicator": "pink",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support mammographic screening in this clinical setting. No standard screening regimen for breast cancer has been recommended in the average-risk man [21]."
+      },
+      {
+        "procedure_name": "Mammography with IV contrast",
+        "color_indicator": "pink",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support screening mammography with IV contrast in this clinical setting. No standard screening regimen for breast cancer has been recommended in the average-risk man [21]."
+      },
+      {
+        "procedure_name": "MRI breast without and with IV contrast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support breast MRI screening without and with IV contrast in this clinical setting. No standard screening regimen for breast cancer has been recommended in the average-risk man [21]."
+      },
+      {
+        "procedure_name": "MRI breast without and with IV contrast abbreviated",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support abbreviated breast MRI screening without and with IV contrast in this clinical setting. No standard screening regimen for breast cancer has been recommended in the average-risk man [21]."
+      },
+      {
+        "procedure_name": "MRI breast without IV contrast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support breast MRI screening without IV contrast in this clinical setting. No standard screening regimen for breast cancer has been recommended in the average-risk man [21]."
+      },
+      {
+        "procedure_name": "MRI breast without IV contrast abbreviated",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support abbreviated breast MRI screening without IV contrast in this clinical setting. No standard screening regimen for breast cancer has been recommended in the average-risk man [21]."
+      },
+      {
+        "procedure_name": "Sestamibi MBI",
+        "color_indicator": "pink",
+        "adult_rrl": "1-10 mSv☢☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support sestamibi MBI screening in this clinical setting. No standard screening regimen for breast cancer has been recommended in the average-risk man [21]."
+      }
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "692cb38d4ba1902baa72caab"
+    },
+    "panel": "Breast",
+    "scenario_id": "3185416",
+    "condition": "Breast cancer screening",
+    "scenario_description": "Breast cancer screening, cancer hx, mastectomy, autologous reconstruction side",
+    "scenario_url": "https://gravitas.acr.org/ACPortal/GetDataForOneScenario?senarioId=5367",
+    "sex": "Female Only",
+    "age": "18 - 150",
+    "body_area": "Breast",
+    "priority_clinical_areas": "",
+    "variant": {
+      "id": "variant1779",
+      "description": "Female. Breast cancer screening. History of cancer, autologous reconstruction side(s) with or without implant."
+    },
+    "procedures": [
+      {
+        "procedure_name": "Digital breast tomosynthesis screening",
+        "color_indicator": "yellow",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "May be appropriate",
+        "more_information": "Although insufficient studies have been performed to assess the utility of DBT in this setting, multiple investigations have demonstrated that DBT is helpful in the screening setting of the native breast, thus decreasing recall rates and increasing cancer detection rates compared to a conventional mammographic workup [21-26]."
+      },
+      {
+        "procedure_name": "Mammography screening",
+        "color_indicator": "yellow",
+        "adult_rrl": "0.1-1mSv☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "May be appropriate",
+        "more_information": "Evidence is limited, but a few retrospective studies suggest a benefit to screening women with autologous reconstruction after mastectomy for cancer in the reconstruction side. Helvie et al [27] looked at 214 consecutive screening mammograms in 113 women with TRAM flap reconstructions, 106 (94%) of which were performed after mastectomy for cancer. The cancer detection rate was 0.9% per screen and 1.9% per patient (2/106, 95% confidence interval [CI]: 0.33%, 7.32%) and positive predictive value (PPV) of biopsy was 33% (95% CI: 6%, 76%). Noroozian et al [10] in a larger study of 515 women and 618 mastectomies with reconstruction, 485 of which were performed for cancer, found the cancer detection rate of screening mammography to be 1.5/1,000 screening mammograms, comparable to that for one native breast of age-matched women. However, Freyvogel et al [28] retrospectively evaluated 541 postmastectomy and autologous reconstruction patients. Of these, 397 patients had screening mammography and 537 patients underwent routine clinical examination. Of the patients in the cohort, 26 of 27 (96.3%) had a clinically detectable recurrence, and the two cancers detected on screening were also palpable on follow-up clinical examination. Lee et al [29] evaluated 554 mammograms (265 TRAM flap reconstructions); no cancers were detected through screening and no interval nonpalpable recurrent breast cancers missed at mammography were identified, yielding a 0% rate of detection (exact 95% CI: 0.0%, 1.4%). The authors concluded that screening this population is less effective than screening average-risk women in their 40s, although it should be noted that the upper end of the CI is in line with the rates reported by the other studies mentioned above. Of note, there are no studies specifically evaluating decrease in mortality from screening women in this setting."
+      },
+      {
+        "procedure_name": "US breast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of US for screening in this clinical setting."
+      },
+      {
+        "procedure_name": "MRI breast without and with IV contrast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is insufficient evidence to support the use of MRI without and with IV contrast for screening in this setting. Based on breast cancer risk, including factors such as age at cancer diagnosis, breast density, and family history, women with a personal history of cancer may undergo MRI for the contralateral native breast [17]. In this setting, MRI will also allow for evaluation of the reconstructed breast and may be able to demonstrate recurrent malignancy, although the literature is scant with only several small studies and case reports [30,31]. Reiber et al [31], for example, used MRI to evaluate 41 patients with flap reconstructions, finding one mammographically and sonographically occult cancer in a patient with a latissimus dorsi flap. However, MRI also generated three false-positive biopsies."
+      },
+      {
+        "procedure_name": "MRI breast without IV contrast",
+        "color_indicator": "pink",
+        "adult_rrl": "0 mSvO",
+        "peds_rrl": "0 mSv [ped]O",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of MRI of the breast without IV contrast for screening in this clinical setting."
+      },
+      {
+        "procedure_name": "FDG-PET breast dedicated",
+        "color_indicator": "pink",
+        "adult_rrl": "1-10 mSv☢☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of FDG-PET breast for screening in this clinical setting."
+      },
+      {
+        "procedure_name": "Sestamibi MBI",
+        "color_indicator": "pink",
+        "adult_rrl": "1-10 mSv☢☢☢",
+        "peds_rrl": "",
+        "appropriateness_category": "Usually not appropriate",
+        "more_information": "There is no relevant literature to support the use of Tc-99m sestamibi MBI for screening in this clinical setting."
+      }
+    ]
+  }
+]
