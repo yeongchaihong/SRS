@@ -339,7 +339,13 @@ const ChatbotUI = () => {
           procedure_name: proc.procedure_name,
           rating: proc.adult_rrl || proc.peds_rrl || '',
           appropriate: app,
-          original_category: proc.appropriateness_category
+          original_category: proc.appropriateness_category,
+          more_information:
+            proc.more_information ||
+            proc.moreInformation ||
+            proc["more information"] ||
+            proc["More Information"] ||
+            ""
         };
       });
 
@@ -444,7 +450,13 @@ const ChatbotUI = () => {
           procedure_name: proc.procedure_name,
           rating: proc.adult_rrl || proc.peds_rrl || '',
           appropriate: app,
-          original_category: proc.appropriateness_category
+          original_category: proc.appropriateness_category,
+          more_information:
+            proc.more_information ||
+            proc.moreInformation ||
+            proc["more information"] ||
+            proc["More Information"] ||
+            ""
         };
       });
 

@@ -28,7 +28,7 @@ export default function PatientSelection({ onPatientSelect, onBack }) {
         </div>
       </div>
 
-      <div className="flex items-center flex-col md:gap-20 md:flex-row md:mt-0">
+      <div className="flex items-center flex-col md:gap-20 md:flex-row md:mt-12">
         {/* Adult Selection */}
         <div
           className="flex flex-col items-center md:gap-8 cursor-pointer hover:scale-105 transition-all duration-300 w-100 group"

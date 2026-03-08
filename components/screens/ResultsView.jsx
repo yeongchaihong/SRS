@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export default function ResultsView({ 
   results, 
@@ -11,6 +11,7 @@ export default function ResultsView({
   isFavorite, 
   onToggleFavorite 
 }) {
+  const [selectedInfoItem, setSelectedInfoItem] = useState(null);
 
   // Helper: Convert radiation string to score
   const getRadiationScore = (ratingString) => {
@@ -46,6 +47,23 @@ export default function ResultsView({
       }`}
     >
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+
+  const InfoIcon = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="w-3.5 h-3.5"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="16" x2="12" y2="12" />
+      <line x1="12" y1="8" x2="12.01" y2="8" />
     </svg>
   );
 
@@ -149,6 +167,15 @@ export default function ResultsView({
                                             <span className="text-[10px] font-bold text-slate-500 bg-slate-50 border border-slate-200 px-1.5 rounded whitespace-nowrap">
                                                 {item.rating || "N/A"}
                                             </span>
+                                            <button
+                                                type="button"
+                                                onClick={() => setSelectedInfoItem(item)}
+                                                className="w-6 h-6 rounded-full border border-slate-300 text-slate-500 hover:text-slate-700 hover:border-slate-400 bg-white flex items-center justify-center transition-colors"
+                                                aria-label={`More information about ${item.procedure_name}`}
+                                                title="More information"
+                                            >
+                                                <InfoIcon />
+                                            </button>
                                         </div>
                                     </div>
                                 );
@@ -215,6 +242,15 @@ export default function ResultsView({
                                       <span className="text-xs font-bold text-slate-500 bg-white border border-slate-200 px-2 py-1 rounded-md whitespace-nowrap">
                                           {item.rating || "N/A"}
                                       </span>
+                                      <button
+                                          type="button"
+                                          onClick={() => setSelectedInfoItem(item)}
+                                          className="w-7 h-7 rounded-full border border-slate-300 text-slate-500 hover:text-slate-700 hover:border-slate-400 bg-white flex items-center justify-center transition-colors"
+                                          aria-label={`More information about ${item.procedure_name}`}
+                                          title="More information"
+                                      >
+                                          <InfoIcon />
+                                      </button>
                                   </div>
                               </div>
                           );
@@ -297,6 +333,40 @@ export default function ResultsView({
             </div>
           </div>
       </div>
+
+      {selectedInfoItem && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setSelectedInfoItem(null)}
+        >
+          <div
+            className="w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-xl bg-white border border-slate-200 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-white border-b border-slate-200 px-5 py-4 flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">More Information</h3>
+                <p className="text-sm text-slate-700 font-medium mt-1">
+                  {selectedInfoItem.procedure_name}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedInfoItem(null)}
+                className="px-3 py-1.5 rounded-md border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                aria-label="Close information window"
+              >
+                Close
+              </button>
+            </div>
+            <div className="px-5 py-4 text-sm leading-relaxed text-slate-700 whitespace-pre-line">
+              {selectedInfoItem.more_information ||
+                selectedInfoItem.moreInformation ||
+                "No additional information available."}
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
