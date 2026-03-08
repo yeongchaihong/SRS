@@ -8,8 +8,9 @@ export default function ScenarioSelection({
 }) {
   return (
     <div className="flex flex-col lg:flex-row w-full h-screen relative overflow-hidden bg-slate-50">
+      {/* Mobile background */}
+      <div className="absolute inset-0 z-0 lg:hidden" style={{background: "radial-gradient(125% 125% at 50% 90%, #fff 40%, #4180de 100%)"}}/>
       
-
       {/* 2. LEFT: 3D Model Preview (Desktop Only) */}
       <div className="hidden lg:flex lg:w-[35%] h-full relative bg-slate-100/50 items-center justify-center overflow-hidden border-r border-slate-200">
         <div className="h-[55%] w-[55%] relative flex items-center justify-center">
@@ -26,10 +27,10 @@ export default function ScenarioSelection({
       </div>
 
       {/* 3. RIGHT: Scenario List */}
-      <div className="w-full lg:w-[65%] h-full bg-white flex flex-col z-10 shadow-sm">
+      <div className="w-full lg:w-[65%] h-full lg:bg-white flex flex-col z-10 shadow-sm">
         
         {/* Header */}
-        <div className="pt-24 px-6 md:px-10 pb-6 shrink-0 border-b border-slate-100 bg-white z-20">
+        <div className="md:pt-15 px-6 md:px-10 pb-6 shrink-0 lg:border-b lg:border-slate-100 lg:bg-blue-200 z-2 pt-24">
           <div className="flex flex-row items mb-2">
             <button
             onClick={onBack}
@@ -49,14 +50,14 @@ export default function ScenarioSelection({
         {/* Scrollable Table Area */}
         <div className="flex-1 overflow-y-auto custom-scrollbar relative">
           <table className="w-full border-collapse text-left">
-            <thead className="sticky top-0 bg-white/95 backdrop-blur-md z-10 shadow-sm">
+            <thead className="sticky top-0 lg:bg-white/95 lg:backdrop-blur-md z-10 shadow-sm">
               <tr>
                 {/* ID HEADER: Reduced width (w-20) and padding (pl-4) on mobile */}
-                <th className="py-4 pl-4 md:pl-10 pr-2 md:pr-4 text-xs font-bold text-slate-400 uppercase tracking-widest w-20 md:w-32 border-b border-slate-100">
+                <th className="py-4 pl-4 md:pl-10 pr-2 md:pr-4 text-xs font-bold text-slate-600 uppercase tracking-widest w-20 md:w-32 lg:border-b lg:border-slate-100">
                   ID
                 </th>
                 {/* DESCRIPTION HEADER: Reduced left padding (pl-2) to maximize width */}
-                <th className="py-4 pl-2 pr-4 md:pr-10 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                <th className="py-4 pl-2 pr-4 md:pr-10 text-xs font-bold text-slate-600 uppercase tracking-widest lg:border-b lg:border-slate-100">
                   Description
                 </th>
               </tr>
@@ -66,7 +67,7 @@ export default function ScenarioSelection({
                 <tr
                   key={item.scenario_id || index}
                   onClick={() => onScenarioSelect(item)}
-                  className="group cursor-pointer hover:bg-slate-50 transition-colors duration-150"
+                  className="group cursor-pointer hover:bg-slate-100 transition-colors duration-150"
                 >
                   {/* ID CELL */}
                   <td className="py-5 pl-4 md:pl-10 pr-2 md:pr-4 align-top">

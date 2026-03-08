@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import PatientSelection from "./screens/PatientSelection";
@@ -21,12 +21,14 @@ const ChatbotUI = () => {
 
   // --- 3D Model State ---
   const [selectedModelSrc, setSelectedModelSrc] = useState(null);
+  const [multiModelIndex, setMultiModelIndex] = useState(0);
   const [modelCentered, setModelCentered] = useState(true);
   const [hasMoved, setHasMoved] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
 
   // --- Selection State ---
   const [activeBodyArea, setActiveBodyArea] = useState(null);
+  const [activeBodyAreas, setActiveBodyAreas] = useState([]);
   const [panels, setPanels] = useState([]);
   const [selectedPanel, setSelectedPanel] = useState(null);
   const [conditions, setConditions] = useState([]);
@@ -84,11 +86,58 @@ const ChatbotUI = () => {
     fetchMasterData();
   }, []);
 
+  // Derive the effective list of body areas to filter by
+  const effectiveBodyAreas = activeBodyAreas.length > 0
+    ? activeBodyAreas.map(a => (typeof a === 'string' ? a : a.name).toLowerCase())
+    : activeBodyArea ? [activeBodyArea.toLowerCase()] : [];
+
+  const multiModelSequence = useMemo(() => {
+    const seen = new Set();
+    return activeBodyAreas
+      .flatMap((area) => {
+        if (typeof area === "string") return [];
+        if (Array.isArray(area?.linkedAreas) && area.linkedAreas.length > 0) {
+          return area.linkedAreas
+            .map((linked) => {
+              if (!linked?.model) return null;
+              return {
+                name: linked?.name || "Model",
+                model: linked.model,
+              };
+            })
+            .filter(Boolean);
+        }
+        if (!area?.model) return [];
+        return [{ name: area?.name || "Model", model: area.model }];
+      })
+      .filter((entry) => {
+        if (!entry || seen.has(entry.model)) return false;
+        seen.add(entry.model);
+        return true;
+      });
+  }, [activeBodyAreas]);
+
+  const multiModelSources = useMemo(
+    () => multiModelSequence.map((entry) => entry.model),
+    [multiModelSequence]
+  );
+
+  const currentModelLabel =
+    multiModelSequence[multiModelIndex]?.name || null;
+
+  const setMultiModelByIndex = useCallback((index) => {
+    if (multiModelSources.length === 0) return;
+    const total = multiModelSources.length;
+    const normalizedIndex = ((index % total) + total) % total;
+    setMultiModelIndex(normalizedIndex);
+    setSelectedModelSrc(multiModelSources[normalizedIndex]);
+  }, [multiModelSources]);
+
   useEffect(() => {
-    if (activeBodyArea && ageFilteredData.length > 0) {
+    if (effectiveBodyAreas.length > 0 && ageFilteredData.length > 0) {
       const relevantRows = ageFilteredData.filter(item => {
-        const area = item["Body Area"] || item.body_area;
-        return area && area.toLowerCase() === activeBodyArea.toLowerCase();
+        const area = (item["Body Area"] || item.body_area || "").toLowerCase();
+        return effectiveBodyAreas.includes(area);
       });
       const uniquePanels = [];
       const seenPanels = new Set();
@@ -103,14 +152,14 @@ const ChatbotUI = () => {
       setConditions([]);
       setSelectedCondition(null);
     }
-  }, [activeBodyArea, ageFilteredData]);
+  }, [activeBodyArea, activeBodyAreas, ageFilteredData]);
 
   // IMPORTANT FIX: Removed setSelectedCondition(null) from here to prevent wiping state on history restore
   useEffect(() => {
     if (selectedPanel && ageFilteredData.length > 0) {
       const relevantRows = ageFilteredData.filter(item => {
-        const area = item["Body Area"] || item.body_area;
-        return (area && area.toLowerCase() === activeBodyArea.toLowerCase()) && item.panel === selectedPanel;
+        const area = (item["Body Area"] || item.body_area || "").toLowerCase();
+        return effectiveBodyAreas.includes(area) && item.panel === selectedPanel;
       });
       const uniqueConditions = [];
       const seenConditions = new Set();
@@ -124,7 +173,7 @@ const ChatbotUI = () => {
       setConditions(uniqueConditions);
       // setSelectedCondition(null); // <--- REMOVED THIS LINE
     }
-  }, [selectedPanel, activeBodyArea, ageFilteredData]);
+  }, [selectedPanel, activeBodyArea, activeBodyAreas, ageFilteredData]);
 
   useEffect(() => {
     if (!showPanelAndCondition) {
@@ -140,6 +189,33 @@ const ChatbotUI = () => {
       return () => clearTimeout(timer);
     }
   }, [showPanelAndCondition]);
+
+  useEffect(() => {
+    if (multiModelSources.length === 0) {
+      setMultiModelIndex(0);
+      return;
+    }
+
+    if (multiModelSources.length === 1) {
+      setMultiModelIndex(0);
+      setSelectedModelSrc(multiModelSources[0]);
+      return;
+    }
+
+    if (multiModelIndex >= multiModelSources.length) {
+      setMultiModelByIndex(0);
+    }
+  }, [multiModelSources, multiModelIndex, setMultiModelByIndex]);
+
+  useEffect(() => {
+    if (!showPanelAndCondition || multiModelSources.length <= 1) return;
+
+    const rotationTimer = setTimeout(() => {
+      setMultiModelByIndex(multiModelIndex + 1);
+    }, 10000);
+
+    return () => clearTimeout(rotationTimer);
+  }, [showPanelAndCondition, multiModelSources, multiModelIndex, setMultiModelByIndex]);
 
   // Check Favorites Status
   useEffect(() => {
@@ -166,16 +242,37 @@ const ChatbotUI = () => {
     setSelectedCondition(null);
   };
 
-  const handleBodyAreaSelect = (bodyArea, modelSrc) => {
+  const handleBodyAreaSelect = (bodyArea, modelSrc, linkedAreas = []) => {
     setSelectedModelSrc(modelSrc);
+    setMultiModelIndex(0);
     setActiveBodyArea(bodyArea);
+    setActiveBodyAreas(linkedAreas.length > 1 ? linkedAreas : []);
     setShowPanelAndCondition(true);
+  };
+
+  const handleMultiBodyAreaSelect = (areas) => {
+    // areas is an array of { name, model } objects
+    setActiveBodyAreas(areas);
+    setMultiModelIndex(0);
+    setActiveBodyArea(areas[0]?.name || null);
+    setSelectedModelSrc(areas[0]?.model || null);
+    setShowPanelAndCondition(true);
+  };
+
+  const handlePrevModel = () => {
+    setMultiModelByIndex(multiModelIndex - 1);
+  };
+
+  const handleNextModel = () => {
+    setMultiModelByIndex(multiModelIndex + 1);
   };
 
   const handleBack3D = (e) => {
     e.stopPropagation();
     setShowPanelAndCondition(false);
+    setMultiModelIndex(0);
     setActiveBodyArea(null);
+    setActiveBodyAreas([]);
     setSelectedPanel(null);
     setSelectedCondition(null);
     setPanels([]);
@@ -199,16 +296,16 @@ const ChatbotUI = () => {
   // IMPORTANT FIX: Reset condition here on manual panel change
   const handlePanelSelect = (panel) => {
     setSelectedPanel(panel);
-    setSelectedCondition(null); 
+    setSelectedCondition(null);
   };
-  
+
   const handleConditionSelect = (condition) => setSelectedCondition(condition);
 
   const handleNext = () => {
     if (selectedCondition && ageFilteredData.length > 0) {
       const relevantRows = ageFilteredData.filter(item => {
-        const area = item["Body Area"] || item.body_area;
-        return (area && area.toLowerCase() === activeBodyArea.toLowerCase()) &&
+        const area = (item["Body Area"] || item.body_area || "").toLowerCase();
+        return effectiveBodyAreas.includes(area) &&
           item.panel === selectedPanel &&
           item.condition === selectedCondition;
       });
@@ -260,11 +357,11 @@ const ChatbotUI = () => {
     }
 
     // 2. Save to History (Robust Condition Extraction)
-    const reliableCondition = 
-      scenarioObj.fullObject?.condition || 
-      scenarioObj.fullObject?.Condition || 
-      selectedCondition || 
-      scenarioObj.fullObject?.panel || 
+    const reliableCondition =
+      scenarioObj.fullObject?.condition ||
+      scenarioObj.fullObject?.Condition ||
+      selectedCondition ||
+      scenarioObj.fullObject?.panel ||
       "General Referral";
 
     const historyItem = {
@@ -281,7 +378,7 @@ const ChatbotUI = () => {
     // Avoid duplicates
     const filteredHistory = existingHistory.filter(h => h.scenario.scenario_id !== scenarioObj.scenario_id);
     const updatedHistory = [historyItem, ...filteredHistory].slice(0, 15);
-    
+
     localStorage.setItem("recent_referrals", JSON.stringify(updatedHistory));
   };
 
@@ -311,7 +408,9 @@ const ChatbotUI = () => {
     setSelectedPatient(null);
     setShowBodyArea(false);
     setShowPanelAndCondition(false);
+    setMultiModelIndex(0);
     setActiveBodyArea(null);
+    setActiveBodyAreas([]);
     setPanels([]);
     setSelectedPanel(null);
     setConditions([]);
@@ -380,11 +479,11 @@ const ChatbotUI = () => {
       setIsFavorite(false);
     } else {
       // Add it - Robust Logic
-      const reliableCondition = 
-        selectedCondition || 
-        selectedScenario.fullObject?.condition || 
-        selectedScenario.fullObject?.Condition || 
-        selectedScenario.fullObject?.panel || 
+      const reliableCondition =
+        selectedCondition ||
+        selectedScenario.fullObject?.condition ||
+        selectedScenario.fullObject?.Condition ||
+        selectedScenario.fullObject?.panel ||
         "General Referral";
 
       const newFav = {
@@ -395,7 +494,7 @@ const ChatbotUI = () => {
         condition: reliableCondition, // <--- Using robust variable
         scenario: selectedScenario
       };
-      
+
       console.log("Adding to favorites:", newFav);
       localStorage.setItem("favorite_referrals", JSON.stringify([newFav, ...favorites]));
       setIsFavorite(true);
@@ -405,7 +504,7 @@ const ChatbotUI = () => {
   const handleGlobalBack = () => {
     if (showResults) return handleBackFromResults();
     if (showScenarioSelection) return handleBackFromScenario();
-    if (showPanelAndCondition) return handleBack3D({ stopPropagation: () => {} });
+    if (showPanelAndCondition) return handleBack3D({ stopPropagation: () => { } });
     if (showBodyArea) return handleBack();
     if (isStarted && !showBodyArea) {
       setIsStarted(false);
@@ -459,6 +558,7 @@ const ChatbotUI = () => {
                 masterData={ageFilteredData}
                 onBack={handleBack}
                 onBodyAreaSelect={handleBodyAreaSelect}
+                onMultiBodyAreaSelect={handleMultiBodyAreaSelect}
               />
             )}
 
@@ -468,14 +568,20 @@ const ChatbotUI = () => {
                   selectedModelSrc={selectedModelSrc}
                   modelCentered={modelCentered}
                   hasMoved={hasMoved}
+                  currentModelIndex={multiModelIndex}
+                  totalModels={multiModelSources.length}
+                  currentModelLabel={currentModelLabel}
                   panels={panels}
                   conditions={conditions}
                   activeBodyArea={activeBodyArea}
+                  activeBodyAreas={activeBodyAreas}
                   selectedPanel={selectedPanel}
                   selectedCondition={selectedCondition}
                   onBack={handleBack3D}
                   onClose={handleClose3D}
                   onUserInteract={handleUserInteract}
+                  onPrevModel={handlePrevModel}
+                  onNextModel={handleNextModel}
                   onPanelSelect={handlePanelSelect}
                   onConditionSelect={handleConditionSelect}
                   onNext={handleNext}
@@ -490,12 +596,12 @@ const ChatbotUI = () => {
   // --- Main Render ---
   return (
     <div className="min-h-screen w-full relative overflow-hidden font-sans text-black bg-white">
-      
+
       {isStarted && !isLoading && (
         <div className="fixed top-8 left-4 md:top-6 md:left-6 z-[100] flex flex-row gap-3 md:gap-4 items-center md:items-start">
-          
+
           {/* Sidebar Toggle */}
-          <button 
+          <button
             onClick={() => setIsSidebarOpen(true)}
             className="bg-white/90 backdrop-blur-md border border-slate-200 p-2.5 md:p-3 rounded-full shadow-lg hover:scale-110 transition-all text-slate-600 active:scale-95 shrink-0"
             aria-label="Open History"
@@ -517,12 +623,12 @@ const ChatbotUI = () => {
         </div>
       )}
 
-      <Sidebar 
-        isOpen={isSidebarOpen} 
-        onClose={() => setIsSidebarOpen(false)} 
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
         onSelectHistory={handleSelectFromHistory}
       />
-      
+
       {!isStarted ? (
         <WelcomeScreen onStart={handleStart} />
       ) : isLoading ? (
