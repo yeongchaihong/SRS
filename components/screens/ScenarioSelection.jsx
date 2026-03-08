@@ -30,7 +30,7 @@ export default function ScenarioSelection({
       <div className="w-full lg:w-[65%] h-full lg:bg-white flex flex-col z-10 shadow-sm">
         
         {/* Header */}
-        <div className="md:pt-15 px-6 md:px-10 pb-6 shrink-0 lg:border-b lg:border-slate-100 lg:bg-blue-200 z-2 pt-24">
+        <div className="md:pt-15 px-6 md:px-10 pb-6 shrink-0 lg:border-b lg:border-slate-100 lg:bg-blue-200 z-20 pt-24">
           <div className="flex flex-row items mb-2">
             <button
             onClick={onBack}
@@ -50,7 +50,7 @@ export default function ScenarioSelection({
         {/* Scrollable Table Area */}
         <div className="flex-1 overflow-y-auto custom-scrollbar relative">
           <table className="w-full border-collapse text-left">
-            <thead className="sticky top-0 lg:bg-white/95 lg:backdrop-blur-md z-10 shadow-sm">
+            <thead className="sticky top-0 lg:bg-white/95 backdrop-blur-md z-20 shadow-sm">
               <tr>
                 {/* ID HEADER: Reduced width (w-20) and padding (pl-4) on mobile */}
                 <th className="py-4 pl-4 md:pl-10 pr-2 md:pr-4 text-xs font-bold text-slate-600 uppercase tracking-widest w-20 md:w-32 lg:border-b lg:border-slate-100">
