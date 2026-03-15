@@ -14,6 +14,7 @@ export function GooeyText({
 }) {
   const text1Ref = React.useRef(null);
   const text2Ref = React.useRef(null);
+  const filterId = React.useId();
   const indexRef = React.useRef(texts && texts.length ? texts.length - 1 : 0);
   const rafRef = React.useRef(null);
 
@@ -128,7 +129,14 @@ export function GooeyText({
     <div className={cn("relative", className)}>
       <svg className="absolute h-0 w-0" aria-hidden="true" focusable="false">
         <defs>
-          <filter id="threshold">
+          <filter
+            id={filterId}
+            x="-30%"
+            y="-30%"
+            width="160%"
+            height="160%"
+            filterUnits="objectBoundingBox"
+          >
             <feColorMatrix
               in="SourceGraphic"
               type="matrix"
@@ -141,7 +149,10 @@ export function GooeyText({
       </svg>
       <div
         className="w-full h-full relative"
-        style={{ filter: "url(#threshold)" }}>
+        style={{
+          filter: `url(#${filterId})`,
+          WebkitFilter: `url(#${filterId})`
+        }}>
         <span
           ref={text1Ref}
           className={cn(
